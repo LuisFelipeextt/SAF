@@ -13,6 +13,7 @@ A Chrome extension for automatic filling of Stripe checkout forms with customiza
 - 🔒 **Card Validation** - Optional Luhn validation for realistic cards
 - 🏠 **Address Management** - Multiple address sources (static/manual/auto)
 - 👤 **Name Management** - Flexible name generation options
+- 🤖 **Auto-Generation** - Generate realistic random names and addresses for all 50 US states
 - 📦 **Local Storage** - All data stored locally in browser
 - ⚡ **Fast Performance** - No external dependencies
 - 🎯 **BIN History** - Quick access to recently used BINs
@@ -56,12 +57,12 @@ Access settings by clicking the ⚙️ icon in the extension popup:
 #### Address Source
 - **Static**: Use built-in default addresses
 - **Manual**: Use addresses you've added in Settings tab
-- **Auto**: Future feature for automatic generation
+- **Auto**: Automatically generate random realistic USA addresses (all 50 states)
 
 #### Name Source
 - **Static**: Use built-in default names
 - **Manual**: Use custom names from Settings tab
-- **Auto**: Future feature for automatic generation
+- **Auto**: Automatically generate random realistic names (taken from addresses)
 
 ### Clearing Data
 
@@ -185,17 +186,17 @@ No build process required. The extension runs directly from source files.
 ## Known Issues
 
 - BIN List tab: Currently shows "Coming Soon" placeholder
-- Auto-generation: Future feature, not yet implemented
 
 ## Roadmap
 
+- [x] Add automatic address generation (USA - all 50 states)
+- [x] Add automatic name generation (realistic male/female names)
 - [ ] Implement BIN database
-- [ ] Add automatic address generation
-- [ ] Add automatic name generation
-- [ ] Support for multiple countries
+- [ ] Support for multiple countries (Canada, UK, EU)
 - [ ] Export/import settings
 - [ ] Keyboard shortcuts
 - [ ] Dark/light theme toggle
+- [ ] Email generation
 
 ## Contributing
 
@@ -224,14 +225,21 @@ If you encounter any issues or have questions:
 
 ## Changelog
 
-### Version 1.0.0 (Current)
-- Initial release
+### Version 1.1.0 (Current)
+- ✨ **NEW**: Auto-generation of realistic names (male/female)
+- ✨ **NEW**: Auto-generation of addresses for all 50 US states
+- ✨ **NEW**: Support for 1000+ real US cities
 - Card generation with Luhn validation
 - Address and name management
 - Dark theme UI
 - BIN history
 - Settings panel
 - Clear data functionality
+
+### Version 1.0.0
+- Initial release
+- Basic card generation
+- Manual address management
 
 ## Author
 

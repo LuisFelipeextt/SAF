@@ -50,9 +50,16 @@ async function getRandomAddress() {
           availableAddresses = customAddresses.length > 0 ? customAddresses : DEFAULT_ADDRESSES;
           break;
         case 'auto':
-          // Для будущего - автогенерация
-          // Пока используем дефолтные
-          availableAddresses = DEFAULT_ADDRESSES;
+          // Автогенерация случайного адреса
+          if (typeof window.DataGenerator !== 'undefined') {
+            const generatedAddress = window.DataGenerator.generateRandomAddress();
+            console.log(`[SAF] Auto-generated address:`, generatedAddress.name, generatedAddress.city, generatedAddress.stateCode);
+            resolve(generatedAddress);
+            return;
+          } else {
+            console.warn('[SAF] DataGenerator not loaded, falling back to static');
+            availableAddresses = DEFAULT_ADDRESSES;
+          }
           break;
         default:
           availableAddresses = DEFAULT_ADDRESSES;
