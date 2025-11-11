@@ -34,9 +34,11 @@ const DEFAULT_ADDRESSES = [
 
 async function getRandomAddress() {
   return new Promise((resolve) => {
-    chrome.storage.local.get(['customAddresses', 'addressSource'], (result) => {
+    chrome.storage.local.get(['customAddresses', 'addressSource', 'customNames', 'nameSource'], (result) => {
       const customAddresses = result.customAddresses || [];
+      const customNames = result.customNames || [];
       const addressSource = result.addressSource || 'static';
+      const nameSource = result.nameSource || 'static';
       
       let availableAddresses = [];
       
@@ -51,13 +53,85 @@ async function getRandomAddress() {
           break;
         case 'auto':
           // Автогенерация случайного адреса
-          if (typeof window.DataGenerator !== 'undefined') {
-            const generatedAddress = window.DataGenerator.generateRandomAddress();
+          // Проверяем DataGenerator с несколькими попытками (на случай задержки загрузки)
+          const checkDataGenerator = () => {
+            if (typeof window !== 'undefined' && typeof window.DataGenerator !== 'undefined' && 
+                typeof window.DataGenerator.generateRandomAddress === 'function') {
+              return window.DataGenerator;
+            }
+            return null;
+          };
+          
+          let DataGen = checkDataGenerator();
+          
+          // Если DataGenerator не загружен, ждем немного и пробуем снова
+          if (!DataGen) {
+            console.log('[SAF] DataGenerator not immediately available, waiting...');
+            // Даем небольшую задержку для загрузки скрипта
+            setTimeout(() => {
+              DataGen = checkDataGenerator();
+              if (DataGen) {
+                try {
+                  const generatedAddress = DataGen.generateRandomAddress();
+                  console.log(`[SAF] Auto-generated address:`, generatedAddress.name, generatedAddress.city, generatedAddress.stateCode);
+                  resolve(generatedAddress);
+                  return;
+                } catch (error) {
+                  console.error('[SAF] Error generating address:', error);
+                  console.warn('[SAF] Falling back to static addresses');
+                  availableAddresses = DEFAULT_ADDRESSES;
+                }
+              } else {
+                console.warn('[SAF] DataGenerator not loaded after wait, falling back to static');
+                availableAddresses = DEFAULT_ADDRESSES;
+              }
+              
+              // Если не удалось сгенерировать, продолжаем с обычной логикой
+              if (availableAddresses === DEFAULT_ADDRESSES) {
+                let addr;
+                if (availableAddresses.length === 0) {
+                  addr = DEFAULT_ADDRESSES[0];
+                } else {
+                  addr = availableAddresses[Math.floor(Math.random() * availableAddresses.length)];
+                }
+                
+                // Применяем настройки источника имени
+                if (nameSource === 'manual' && customNames.length > 0) {
+                  const customName = customNames[Math.floor(Math.random() * customNames.length)];
+                  addr = {
+                    ...addr,
+                    name: customName.fullName,
+                    firstName: customName.firstName,
+                    lastName: customName.lastName
+                  };
+                  console.log(`[SAF] Using custom name:`, customName.fullName);
+                } else if (nameSource === 'static') {
+                  const staticName = DEFAULT_ADDRESSES[Math.floor(Math.random() * DEFAULT_ADDRESSES.length)];
+                  addr = {
+                    ...addr,
+                    name: staticName.name,
+                    firstName: staticName.firstName,
+                    lastName: staticName.lastName
+                  };
+                  console.log(`[SAF] Using static name:`, staticName.name);
+                }
+                
+                console.log(`[SAF] Final address with name:`, addr.name, addr.city, addr.stateCode);
+                resolve(addr);
+              }
+            }, 100);
+            return; // Выходим из функции, resolve будет вызван в setTimeout
+          }
+          
+          // Если DataGenerator доступен сразу
+          try {
+            const generatedAddress = DataGen.generateRandomAddress();
             console.log(`[SAF] Auto-generated address:`, generatedAddress.name, generatedAddress.city, generatedAddress.stateCode);
             resolve(generatedAddress);
             return;
-          } else {
-            console.warn('[SAF] DataGenerator not loaded, falling back to static');
+          } catch (error) {
+            console.error('[SAF] Error generating address:', error);
+            console.warn('[SAF] Falling back to static addresses');
             availableAddresses = DEFAULT_ADDRESSES;
           }
           break;
@@ -65,13 +139,39 @@ async function getRandomAddress() {
           availableAddresses = DEFAULT_ADDRESSES;
       }
       
+      let addr;
       if (availableAddresses.length === 0) {
-        resolve(DEFAULT_ADDRESSES[0]);
+        addr = DEFAULT_ADDRESSES[0];
       } else {
-        const addr = availableAddresses[Math.floor(Math.random() * availableAddresses.length)];
-        console.log(`[SAF] Using ${addressSource} address:`, addr.name);
-        resolve(addr);
+        addr = availableAddresses[Math.floor(Math.random() * availableAddresses.length)];
       }
+      
+      // Применяем настройки источника имени
+      if (nameSource === 'manual' && customNames.length > 0) {
+        // Используем пользовательское имя
+        const customName = customNames[Math.floor(Math.random() * customNames.length)];
+        addr = {
+          ...addr,
+          name: customName.fullName,
+          firstName: customName.firstName,
+          lastName: customName.lastName
+        };
+        console.log(`[SAF] Using custom name:`, customName.fullName);
+      } else if (nameSource === 'static') {
+        // Используем статическое имя из DEFAULT_ADDRESSES
+        const staticName = DEFAULT_ADDRESSES[Math.floor(Math.random() * DEFAULT_ADDRESSES.length)];
+        addr = {
+          ...addr,
+          name: staticName.name,
+          firstName: staticName.firstName,
+          lastName: staticName.lastName
+        };
+        console.log(`[SAF] Using static name:`, staticName.name);
+      }
+      // Если nameSource === 'auto' - используем имя из адреса (по умолчанию)
+      
+      console.log(`[SAF] Final address with name:`, addr.name, addr.city, addr.stateCode);
+      resolve(addr);
     });
   });
 }
@@ -80,10 +180,52 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Случайная задержка для имитации человеческого ввода
-function randomDelay(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+// Кэш для случайных чисел (оптимизация производительности)
+const delayCache = [];
+const DELAY_CACHE_SIZE = 100;
+let delayCacheIndex = 0;
+
+// Предзаполняем кэш
+for (let i = 0; i < DELAY_CACHE_SIZE; i++) {
+  delayCache[i] = Math.random();
 }
+
+// Случайная задержка для имитации человеческого ввода (оптимизированная)
+function randomDelay(min, max) {
+  if (delayCacheIndex >= DELAY_CACHE_SIZE) {
+    delayCacheIndex = 0;
+    // Обновляем кэш
+    for (let i = 0; i < DELAY_CACHE_SIZE; i++) {
+      delayCache[i] = Math.random();
+    }
+  }
+  const r = delayCache[delayCacheIndex++];
+  return Math.floor(r * (max - min + 1)) + min;
+}
+
+// Получить настройку моментального ввода
+let instantFillEnabled = false;
+
+// Функция для обновления настройки моментального ввода
+async function updateInstantFillSetting() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['instantFill'], (result) => {
+      instantFillEnabled = result.instantFill === true;
+      resolve(instantFillEnabled);
+    });
+  });
+}
+
+// Загружаем настройку при загрузке скрипта
+updateInstantFillSetting();
+
+// Слушаем изменения настройки
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === 'local' && changes.instantFill) {
+    instantFillEnabled = changes.instantFill.newValue === true;
+    console.log('[SAF] Instant Fill setting updated:', instantFillEnabled);
+  }
+});
 
 // Посимвольный ввод текста (более реалистично)
 async function typeText(element, text, useTyping = false) {
@@ -91,9 +233,11 @@ async function typeText(element, text, useTyping = false) {
   
   element.focus();
   element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  await sleep(randomDelay(150, 300));
+  if (!instantFillEnabled) {
+    await sleep(randomDelay(150, 300));
+  }
   
-  if (useTyping && text.length < 50) {
+  if (useTyping && text.length < 50 && !instantFillEnabled) {
     // Посимвольный ввод для коротких текстов
     element.value = '';
     for (let i = 0; i < text.length; i++) {
@@ -103,19 +247,34 @@ async function typeText(element, text, useTyping = false) {
     }
     element.dispatchEvent(new Event('change', { bubbles: true }));
   } else {
-    // Быстрый ввод для длинных текстов
+    // Быстрый ввод для длинных текстов или моментальный ввод
     element.value = text;
     element.dispatchEvent(new Event('input', { bubbles: true }));
     element.dispatchEvent(new Event('change', { bubbles: true }));
   }
   
-  await sleep(randomDelay(100, 200));
-  element.blur();
-  await sleep(randomDelay(200, 400));
+  if (!instantFillEnabled) {
+    await sleep(randomDelay(100, 200));
+    element.blur();
+    await sleep(randomDelay(200, 400));
+  } else {
+    element.blur();
+  }
 }
 
-// Получить все корневые элементы включая shadow DOM
+// Кэш для корневых элементов (обновляется при необходимости)
+let rootsCache = null;
+let rootsCacheTime = 0;
+const ROOTS_CACHE_TTL = 5000; // 5 секунд
+
+// Получить все корневые элементы включая shadow DOM (с кэшированием)
 function collectRoots() {
+  const now = Date.now();
+  // Используем кэш если он свежий
+  if (rootsCache && (now - rootsCacheTime) < ROOTS_CACHE_TTL) {
+    return rootsCache;
+  }
+  
   const roots = [document];
   const stack = [document.documentElement];
   while (stack.length) {
@@ -129,6 +288,10 @@ function collectRoots() {
       stack.push(children[i]);
     }
   }
+  
+  // Сохраняем в кэш
+  rootsCache = roots;
+  rootsCacheTime = now;
   return roots;
 }
 
@@ -144,15 +307,32 @@ function isVisible(el) {
   return true;
 }
 
-// Собрать все видимые элементы форм
+// Кэш для элементов форм
+let formElementsCache = null;
+let formElementsCacheTime = 0;
+const FORM_ELEMENTS_CACHE_TTL = 3000; // 3 секунды
+
+// Собрать все видимые элементы форм (с кэшированием)
 function collectFormElements() {
+  const now = Date.now();
+  // Используем кэш если он свежий
+  if (formElementsCache && (now - formElementsCacheTime) < FORM_ELEMENTS_CACHE_TTL) {
+    return formElementsCache;
+  }
+  
   const elements = [];
   for (const root of collectRoots()) {
     const found = root.querySelectorAll('input, select, textarea');
-    found.forEach((el) => {
+    // Используем for loop вместо forEach для лучшей производительности
+    for (let i = 0; i < found.length; i++) {
+      const el = found[i];
       if (isVisible(el)) elements.push(el);
-    });
+    }
   }
+  
+  // Сохраняем в кэш
+  formElementsCache = elements;
+  formElementsCacheTime = now;
   return elements;
 }
 
@@ -164,7 +344,9 @@ async function setNativeValueAndDispatch(el, value, useTyping = false) {
     // Фокус на поле как реальный пользователь
     el.focus();
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    await sleep(randomDelay(150, 300)); // Случайная задержка после фокуса
+    if (!instantFillEnabled) {
+      await sleep(randomDelay(150, 300)); // Случайная задержка после фокуса
+    }
     
     const tag = el.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA') {
@@ -173,8 +355,8 @@ async function setNativeValueAndDispatch(el, value, useTyping = false) {
         : window.HTMLTextAreaElement.prototype;
       const valueSetter = Object.getOwnPropertyDescriptor(proto, 'value').set;
       
-      // Опциональный посимвольный ввод для имён и коротких полей
-      if (useTyping && value && value.length < 30) {
+      // Опциональный посимвольный ввод для имён и коротких полей (только если не моментальный ввод)
+      if (useTyping && value && value.length < 30 && !instantFillEnabled) {
         el.value = '';
         for (let i = 0; i < value.length; i++) {
           valueSetter.call(el, el.value + value[i]);
@@ -187,27 +369,39 @@ async function setNativeValueAndDispatch(el, value, useTyping = false) {
       }
       
       el.dispatchEvent(new Event('change', { bubbles: true }));
-      await sleep(randomDelay(150, 250)); // Случайная задержка после ввода
+      if (!instantFillEnabled) {
+        await sleep(randomDelay(150, 250)); // Случайная задержка после ввода
+      }
       el.blur();
     } else if (tag === 'SELECT') {
       el.value = value;
       el.dispatchEvent(new Event('change', { bubbles: true }));
-      await sleep(randomDelay(200, 350));
+      if (!instantFillEnabled) {
+        await sleep(randomDelay(200, 350));
+      }
       el.blur();
     }
     
-    // Дополнительная случайная задержка между полями
-    await sleep(randomDelay(300, 500));
+    // Дополнительная случайная задержка между полями (только если не моментальный ввод)
+    if (!instantFillEnabled) {
+      await sleep(randomDelay(300, 500));
+    }
   } catch (_) {
     try {
       el.focus();
-      await sleep(randomDelay(150, 300));
+      if (!instantFillEnabled) {
+        await sleep(randomDelay(150, 300));
+      }
       el.value = value;
       el.dispatchEvent(new Event('input', { bubbles: true }));
       el.dispatchEvent(new Event('change', { bubbles: true }));
-      await sleep(randomDelay(150, 250));
+      if (!instantFillEnabled) {
+        await sleep(randomDelay(150, 250));
+      }
       el.blur();
-      await sleep(randomDelay(300, 500));
+      if (!instantFillEnabled) {
+        await sleep(randomDelay(300, 500));
+      }
     } catch (_) {}
   }
 }
@@ -441,10 +635,84 @@ async function autofillAll() {
   isProcessing = true;
 
   try {
+    // Обновляем настройку моментального ввода перед заполнением
+    await updateInstantFillSetting();
+    
     showNotification('🔄 Starting auto-fill...', 'info');
     
-    // Небольшая начальная задержка как у реального пользователя
-    await sleep(randomDelay(500, 1000));
+    // Небольшая начальная задержка как у реального пользователя (только если не моментальный ввод)
+    if (!instantFillEnabled) {
+      await sleep(randomDelay(500, 1000));
+    }
+
+    // ПЕРВЫМ ДЕЛОМ: Клик на кнопку выбора карты (аккордеон)
+    console.log('[SAF] 🎯 Looking for card accordion button...');
+    
+    // Множество селекторов для поиска элементов карты
+    const cardSelectors = [
+      '[data-testid="card-accordion-item-button"]',
+      'button[aria-label*="карт" i]',
+      'button[aria-label*="card" i]',
+      '[data-testid="card-accordion-item"] button',
+      '.AccordionButton',
+      'input[type="radio"][value="card"]',
+      'input[id*="card" i][type="radio"]',
+      '.PaymentMethodFormAccordionItemTitle-radio[value="card"]'
+    ];
+    
+    let clicked = false;
+    
+    // Пробуем все селекторы
+    for (const selector of cardSelectors) {
+      const element = document.querySelector(selector);
+      if (element) {
+        console.log(`[SAF] 🔍 Found element with selector: ${selector}`);
+        
+        try {
+          // Прокручиваем к элементу
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          await sleep(randomDelay(200, 400));
+          
+          // Пробуем прямой клик
+          element.click();
+          console.log('[SAF] ✅ Clicked element directly');
+          
+          // Если это радио кнопка - диспатчим события
+          if (element.type === 'radio') {
+            element.checked = true;
+            element.dispatchEvent(new Event('change', { bubbles: true }));
+            element.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('[SAF] ✅ Radio button checked and events dispatched');
+          }
+          
+          await sleep(randomDelay(800, 1200));
+          clicked = true;
+          showNotification('💳 Card selected...', 'info');
+          break;
+        } catch (error) {
+          console.log(`[SAF] ⚠️ Error clicking element: ${error.message}`);
+          
+          // Пробуем клик на родительский элемент
+          try {
+            const parent = element.closest('.AccordionItem, .PaymentMethodFormAccordionItem, [role="listitem"]');
+            if (parent) {
+              console.log('[SAF] 🔄 Trying to click parent element...');
+              parent.click();
+              await sleep(randomDelay(800, 1200));
+              clicked = true;
+              showNotification('💳 Card selected...', 'info');
+              break;
+            }
+          } catch (e) {
+            console.log(`[SAF] ⚠️ Parent click also failed: ${e.message}`);
+          }
+        }
+      }
+    }
+    
+    if (!clicked) {
+      console.log('[SAF] ⚠️ Could not click card button, continuing anyway...');
+    }
 
     // ВСЕГДА генерировать НОВЫЕ карты при каждом запуске
     showNotification('🔄 Generating fresh cards...', 'info');
@@ -471,14 +739,19 @@ async function autofillAll() {
       return;
     }
 
-    // Ждем пока карты сгенерируются и сохранятся
-    await sleep(2000);
-    const storage = await chrome.storage.local.get(['generatedCards']);
+    // Генерация теперь моментальная, но даем небольшую задержку для сохранения в storage
+    await sleep(50); // Уменьшено с 2000ms до 50ms - генерация моментальная
+    let storage = await chrome.storage.local.get(['generatedCards']);
     
+    // Если карты еще не готовы, ждем еще немного (fallback для надежности)
     if (!storage.generatedCards || storage.generatedCards.length === 0) {
-      showNotification('❌ No cards were generated', 'error');
-      isProcessing = false;
-      return;
+      await sleep(100);
+      storage = await chrome.storage.local.get(['generatedCards']);
+      if (!storage.generatedCards || storage.generatedCards.length === 0) {
+        showNotification('❌ No cards were generated', 'error');
+        isProcessing = false;
+        return;
+      }
     }
 
     const card = storage.generatedCards[Math.floor(Math.random() * storage.generatedCards.length)];
@@ -486,16 +759,6 @@ async function autofillAll() {
 
     showNotification('💳 Filling card details...', 'info');
     await sleep(randomDelay(400, 700));
-
-    // Клик на кнопку карты если есть
-    const cardButton = document.querySelector('[data-testid="card-accordion-item-button"]');
-    if (cardButton && isVisible(cardButton)) {
-      console.log('[SAF] Clicking card button...');
-      cardButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      await sleep(randomDelay(300, 500));
-      cardButton.click();
-      await sleep(randomDelay(800, 1200));
-    }
 
     // Заполнить карточные поля
     const cardFields = detectCardFields();
@@ -845,11 +1108,21 @@ function initButton() {
   }
 }
 
-// Наблюдатель за DOM
+// Оптимизированный наблюдатель за DOM (debounce для производительности)
+let observerTimeout = null;
 const observer = new MutationObserver(() => {
-  if (!fillButton && shouldShowButton()) {
-    createFillButton();
+  // Debounce: ждем 100ms перед проверкой
+  if (observerTimeout) {
+    clearTimeout(observerTimeout);
   }
+  observerTimeout = setTimeout(() => {
+    if (!clearButton && shouldShowButton()) {
+      createFillButton();
+    }
+    // Инвалидируем кэши элементов при изменениях DOM
+    rootsCache = null;
+    formElementsCache = null;
+  }, 100);
 });
 
 if (document.body) {
@@ -865,20 +1138,38 @@ if (document.readyState === 'loading') {
   initButton();
 }
 
-setTimeout(initButton, 1000);
-setTimeout(initButton, 2000);
-setTimeout(initButton, 3000);
+// Оптимизированная инициализация кнопки (объединяем множественные setTimeout)
+let initAttempts = 0;
+const maxInitAttempts = 3;
+const initInterval = setInterval(() => {
+  initAttempts++;
+  if (shouldShowButton() && !clearButton) {
+    createFillButton();
+  }
+  if (initAttempts >= maxInitAttempts) {
+    clearInterval(initInterval);
+  }
+}, 1000);
 
 // Слушатель сообщений
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'ping') {
+    // Проверка готовности content script
+    sendResponse({ success: true, ready: true });
+    return true;
+  }
+  
   if (request.action === 'fillForm') {
     autofillAll();
+    sendResponse({ success: true, message: 'Form fill started' });
+    return true;
   }
   
   if (request.action === 'toggle3DSDetection') {
     threeDSDetectionActive = request.enabled;
     console.log('[SAF IP Blocker] 3DS detection:', threeDSDetectionActive ? 'enabled' : 'disabled');
     sendResponse({ success: true, enabled: threeDSDetectionActive });
+    return true;
   }
   
   if (request.action === 'check3DSStatus') {
@@ -887,6 +1178,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       enabled: threeDSDetectionActive,
       modalPresent: detect3DSChallengeModal()
     });
+    return true;
   }
   
   return true; // Для асинхронных ответов
@@ -973,13 +1265,13 @@ function detect3DSChallengeModal() {
  */
 async function getCountryByIP(ip) {
   try {
-    const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,countryCode`);
+    const response = await fetch(`https://ipwho.is/${ip}`);
     const data = await response.json();
     
-    if (data.status === 'success') {
+    if (data.success && data.country_code) {
       return {
         country: data.country,
-        countryCode: data.countryCode
+        countryCode: data.country_code
       };
     }
     return null;
@@ -1063,13 +1355,19 @@ async function handle3DSDetection() {
   }
 }
 
-// Запускаем периодическую проверку наличия 3DS Challenge модального окна
+// Оптимизированная периодическая проверка 3DS Challenge (увеличено до 3 секунд для снижения нагрузки)
 const threeDSCheckInterval = setInterval(() => {
   handle3DSDetection();
-}, 2000); // Проверяем каждые 2 секунды
+}, 3000); // Проверяем каждые 3 секунды (было 2)
 
-// MutationObserver для отслеживания изменений DOM
+// Оптимизированный MutationObserver для 3DS (debounce для производительности)
+let threeDSObserverTimeout = null;
 const threeDSObserver = new MutationObserver((mutations) => {
+  // Debounce: проверяем только раз в 500ms
+  if (threeDSObserverTimeout) {
+    return; // Пропускаем если уже запланирована проверка
+  }
+  
   // Проверяем только если было добавлено что-то существенное
   const hasSignificantChanges = mutations.some(mutation => {
     return mutation.addedNodes.length > 0 || 
@@ -1077,7 +1375,10 @@ const threeDSObserver = new MutationObserver((mutations) => {
   });
   
   if (hasSignificantChanges) {
-    handle3DSDetection();
+    threeDSObserverTimeout = setTimeout(() => {
+      handle3DSDetection();
+      threeDSObserverTimeout = null;
+    }, 500);
   }
 });
 

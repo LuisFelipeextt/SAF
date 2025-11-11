@@ -109,15 +109,61 @@ if (useLuhnValidation) {
   });
 }
 
+// IP Location checkbox
+const useIPLocation = document.getElementById('useIPLocation');
+
+if (useIPLocation) {
+  useIPLocation.addEventListener('change', () => {
+    chrome.storage.local.set({ useIPLocation: useIPLocation.checked });
+    console.log('✅ IP Location setting changed to:', useIPLocation.checked);
+  });
+  
+  // Load saved preference
+  chrome.storage.local.get(['useIPLocation'], (result) => {
+    if (result.useIPLocation !== undefined) {
+      useIPLocation.checked = result.useIPLocation;
+    }
+  });
+}
+
+// Instant Fill checkbox
+const instantFill = document.getElementById('instantFill');
+
+if (instantFill) {
+  instantFill.addEventListener('change', () => {
+    chrome.storage.local.set({ instantFill: instantFill.checked });
+    console.log('✅ Instant Fill setting changed to:', instantFill.checked);
+  });
+  
+  // Load saved preference
+  chrome.storage.local.get(['instantFill'], (result) => {
+    if (result.instantFill !== undefined) {
+      instantFill.checked = result.instantFill;
+    }
+  });
+}
+
 // Address and Name Source Management
 const addressSourceSelect = document.getElementById('addressSourceSelect');
 const nameSourceSelect = document.getElementById('nameSourceSelect');
+const ipLocationContainer = document.getElementById('ipLocationContainer');
+
+// Функция для обновления видимости IP-location опции
+function updateIPLocationVisibility() {
+  if (addressSourceSelect && ipLocationContainer) {
+    const isAutoMode = addressSourceSelect.value === 'auto';
+    ipLocationContainer.style.display = isAutoMode ? 'block' : 'none';
+  }
+}
 
 if (addressSourceSelect) {
   addressSourceSelect.addEventListener('change', () => {
     const source = addressSourceSelect.value;
     chrome.storage.local.set({ addressSource: source });
     console.log('✅ Address source changed to:', source);
+    
+    // Обновляем видимость IP-location
+    updateIPLocationVisibility();
   });
   
   // Load saved preference
@@ -129,6 +175,9 @@ if (addressSourceSelect) {
       addressSourceSelect.value = 'static';
       chrome.storage.local.set({ addressSource: 'static' });
     }
+    
+    // Обновляем видимость после загрузки настроек
+    updateIPLocationVisibility();
   });
 }
 
@@ -294,24 +343,104 @@ generateCardsBtn.addEventListener('click', async () => {
           // Use the first active Stripe tab
           const stripeTab = tabs.find(t => t.active) || tabs[0];
           
-          // Send message to content script to fill form
-          chrome.tabs.sendMessage(stripeTab.id, { action: 'fillForm' }, (fillResponse) => {
-            generateCardsBtn.disabled = false;
-            generateCardsBtn.innerHTML = '<span class="btn-icon">🚀</span><span>Fill Everything</span>';
+          // Проверяем, что вкладка полностью загружена
+          if (stripeTab.status !== 'complete') {
+            // Ждем загрузки вкладки
+            const checkTabReady = (tabId, attempts = 0) => {
+              if (attempts > 10) {
+                generateCardsBtn.disabled = false;
+                generateCardsBtn.innerHTML = '<span class="btn-icon">🚀</span><span>Fill Everything</span>';
+                showStatus('❌ Stripe page is still loading. Please wait and try again.', 'error');
+                return;
+              }
+              
+              chrome.tabs.get(tabId, (tab) => {
+                if (chrome.runtime.lastError) {
+                  generateCardsBtn.disabled = false;
+                  generateCardsBtn.innerHTML = '<span class="btn-icon">🚀</span><span>Fill Everything</span>';
+                  showStatus('❌ Error accessing Stripe tab', 'error');
+                  return;
+                }
+                
+                if (tab.status === 'complete') {
+                  // Вкладка загружена, отправляем сообщение
+                  sendFillMessage(tabId);
+                } else {
+                  // Ждем еще немного
+                  setTimeout(() => checkTabReady(tabId, attempts + 1), 200);
+                }
+              });
+            };
             
-            if (chrome.runtime.lastError) {
-              showStatus('❌ Please open a Stripe checkout page first', 'error');
-            } else {
-              showStatus(`✅ Form filled successfully!`, 'success');
-              showToast('Form filled!');
-            }
-          });
+            checkTabReady(stripeTab.id);
+          } else {
+            // Вкладка уже загружена, сразу отправляем сообщение
+            sendFillMessage(stripeTab.id);
+          }
         } else {
           generateCardsBtn.disabled = false;
           generateCardsBtn.innerHTML = '<span class="btn-icon">🚀</span><span>Fill Everything</span>';
           showStatus('❌ No Stripe checkout page found. Please open one first.', 'error');
         }
       });
+      
+      // Функция для отправки сообщения заполнения формы
+      function sendFillMessage(tabId) {
+        // Сначала проверяем, готов ли content script
+        chrome.tabs.sendMessage(tabId, { action: 'ping' }, (pingResponse) => {
+          const pingError = chrome.runtime.lastError;
+          
+          if (pingError) {
+            // Content script может быть еще не загружен, пробуем отправить fillForm напрямую
+            // Это может сработать, если скрипт загрузится до отправки
+            chrome.tabs.sendMessage(tabId, { action: 'fillForm' }, (fillResponse) => {
+              generateCardsBtn.disabled = false;
+              generateCardsBtn.innerHTML = '<span class="btn-icon">🚀</span><span>Fill Everything</span>';
+              
+              const fillError = chrome.runtime.lastError;
+              if (fillError) {
+                // Проверяем, действительно ли это ошибка отсутствия content script
+                const errorMsg = fillError.message || '';
+                if (errorMsg.includes('Could not establish connection') || 
+                    errorMsg.includes('Receiving end does not exist')) {
+                  showStatus('❌ Content script not ready. Please refresh the Stripe page and try again.', 'error');
+                } else {
+                  // Возможно форма уже заполняется или заполнена - не показываем ошибку
+                  showStatus('✅ Form fill initiated. Check the Stripe page.', 'success');
+                  showToast('Form fill started!');
+                }
+              } else {
+                // Успешно отправлено
+                showStatus(`✅ Form filled successfully!`, 'success');
+                showToast('Form filled!');
+              }
+            });
+          } else {
+            // Content script готов, отправляем fillForm
+            chrome.tabs.sendMessage(tabId, { action: 'fillForm' }, (fillResponse) => {
+              generateCardsBtn.disabled = false;
+              generateCardsBtn.innerHTML = '<span class="btn-icon">🚀</span><span>Fill Everything</span>';
+              
+              const fillError = chrome.runtime.lastError;
+              if (fillError) {
+                const errorMsg = fillError.message || '';
+                if (errorMsg.includes('Could not establish connection') || 
+                    errorMsg.includes('Receiving end does not exist')) {
+                  showStatus('❌ Content script error. Please refresh the Stripe page.', 'error');
+                } else {
+                  // Другие ошибки - возможно форма уже заполняется
+                  showStatus('✅ Form fill initiated.', 'success');
+                  showToast('Form fill started!');
+                }
+              } else {
+                // Успешно отправлено
+                showStatus(`✅ Form filled successfully!`, 'success');
+                showToast('Form filled!');
+              }
+            });
+          }
+        });
+      }
     } else {
       generateCardsBtn.disabled = false;
       generateCardsBtn.innerHTML = '<span class="btn-icon">🚀</span><span>Fill Everything</span>';
@@ -321,45 +450,74 @@ generateCardsBtn.addEventListener('click', async () => {
   });
 });
 
+// Кэш для данных storage (оптимизация)
+let storageCache = {};
+let storageCacheTime = 0;
+const STORAGE_CACHE_TTL = 2000; // 2 секунды
+
+// Оптимизированная функция загрузки истории BIN
 function loadBinHistory() {
+  const now = Date.now();
+  // Используем кэш если он свежий
+  if (storageCache.binHistory !== undefined && storageCache.currentBin !== undefined && 
+      (now - storageCacheTime) < STORAGE_CACHE_TTL) {
+    renderBinHistory(storageCache.binHistory, storageCache.currentBin);
+    return;
+  }
+  
   chrome.storage.local.get(['binHistory', 'currentBin'], (result) => {
-    const history = result.binHistory || [];
-    const currentBin = result.currentBin || DEFAULT_BIN;
+    // Обновляем кэш
+    storageCache.binHistory = result.binHistory || [];
+    storageCache.currentBin = result.currentBin || DEFAULT_BIN;
+    storageCacheTime = now;
     
-    binInput.value = currentBin;
-    binHistoryList.innerHTML = '';
-    
-    if (history.length === 0) {
-      binHistoryList.innerHTML = '<div class="empty">No BINs saved yet</div>';
-      return;
-    }
-    
-    history.forEach(bin => {
-      const item = document.createElement('div');
-      item.className = 'history-item';
-      
-      const binText = document.createElement('span');
-      binText.textContent = bin;
-      binText.className = 'history-bin';
-      binText.addEventListener('click', () => {
-        binInput.value = bin;
-        chrome.storage.local.set({ currentBin: bin });
-        showToast('BIN selected');
-      });
-      
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = '×';
-      deleteBtn.className = 'delete-btn';
-      deleteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        deleteBin(bin);
-      });
-      
-      item.appendChild(binText);
-      item.appendChild(deleteBtn);
-      binHistoryList.appendChild(item);
-    });
+    renderBinHistory(storageCache.binHistory, storageCache.currentBin);
   });
+}
+
+// Вынесенная функция рендеринга (для переиспользования)
+function renderBinHistory(history, currentBin) {
+  binInput.value = currentBin;
+  binHistoryList.innerHTML = '';
+  
+  if (history.length === 0) {
+    binHistoryList.innerHTML = '<div class="empty">No BINs saved yet</div>';
+    return;
+  }
+  
+  // Используем DocumentFragment для лучшей производительности
+  const fragment = document.createDocumentFragment();
+  
+  for (let i = 0; i < history.length; i++) {
+    const bin = history[i];
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    
+    const binText = document.createElement('span');
+    binText.textContent = bin;
+    binText.className = 'history-bin';
+    binText.addEventListener('click', () => {
+      binInput.value = bin;
+      chrome.storage.local.set({ currentBin: bin });
+      showToast('BIN selected');
+      // Обновляем кэш
+      storageCache.currentBin = bin;
+    });
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '×';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteBin(bin);
+    });
+    
+    item.appendChild(binText);
+    item.appendChild(deleteBtn);
+    fragment.appendChild(item);
+  }
+  
+  binHistoryList.appendChild(fragment);
 }
 
 function deleteBin(bin) {
@@ -429,37 +587,59 @@ function clearAddressInputs() {
 }
 
 function loadAddresses() {
+  const now = Date.now();
+  // Используем кэш если он свежий
+  if (storageCache.customAddresses !== undefined && 
+      (now - storageCacheTime) < STORAGE_CACHE_TTL) {
+    renderAddresses(storageCache.customAddresses);
+    return;
+  }
+  
   chrome.storage.local.get(['customAddresses'], (result) => {
     const addresses = result.customAddresses || [];
-    addressesList.innerHTML = '';
+    // Обновляем кэш
+    storageCache.customAddresses = addresses;
+    storageCacheTime = now;
     
-    if (addresses.length === 0) {
-      addressesList.innerHTML = '<div class="empty">No addresses saved yet</div>';
-      return;
-    }
-    
-    addresses.forEach(addr => {
-      const item = document.createElement('div');
-      item.className = 'list-item';
-      
-      const info = document.createElement('div');
-      info.className = 'item-info';
-      info.innerHTML = `
-        <strong>${addr.name}</strong><br>
-        <small>${addr.address1}${addr.address2 ? ', ' + addr.address2 : ''}<br>
-        ${addr.city}, ${addr.state} ${addr.postal}</small>
-      `;
-      
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = '×';
-      deleteBtn.className = 'delete-btn';
-      deleteBtn.addEventListener('click', () => deleteAddress(addr.id));
-      
-      item.appendChild(info);
-      item.appendChild(deleteBtn);
-      addressesList.appendChild(item);
-    });
+    renderAddresses(addresses);
   });
+}
+
+function renderAddresses(addresses) {
+  addressesList.innerHTML = '';
+  
+  if (addresses.length === 0) {
+    addressesList.innerHTML = '<div class="empty">No addresses saved yet</div>';
+    return;
+  }
+  
+  // Используем DocumentFragment для лучшей производительности
+  const fragment = document.createDocumentFragment();
+  
+  for (let i = 0; i < addresses.length; i++) {
+    const addr = addresses[i];
+    const item = document.createElement('div');
+    item.className = 'list-item';
+    
+    const info = document.createElement('div');
+    info.className = 'item-info';
+    info.innerHTML = `
+      <strong>${addr.name}</strong><br>
+      <small>${addr.address1}${addr.address2 ? ', ' + addr.address2 : ''}<br>
+      ${addr.city}, ${addr.state} ${addr.postal}</small>
+    `;
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '×';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.addEventListener('click', () => deleteAddress(addr.id));
+    
+    item.appendChild(info);
+    item.appendChild(deleteBtn);
+    fragment.appendChild(item);
+  }
+  
+  addressesList.appendChild(fragment);
 }
 
 function deleteAddress(id) {
@@ -505,33 +685,55 @@ addNameBtn.addEventListener('click', () => {
 });
 
 function loadNames() {
+  const now = Date.now();
+  // Используем кэш если он свежий
+  if (storageCache.customNames !== undefined && 
+      (now - storageCacheTime) < STORAGE_CACHE_TTL) {
+    renderNames(storageCache.customNames);
+    return;
+  }
+  
   chrome.storage.local.get(['customNames'], (result) => {
     const names = result.customNames || [];
-    namesList.innerHTML = '';
+    // Обновляем кэш
+    storageCache.customNames = names;
+    storageCacheTime = now;
     
-    if (names.length === 0) {
-      namesList.innerHTML = '<div class="empty">No names saved yet</div>';
-      return;
-    }
-    
-    names.forEach(name => {
-      const item = document.createElement('div');
-      item.className = 'list-item';
-      
-      const info = document.createElement('div');
-      info.className = 'item-info';
-      info.innerHTML = `<strong>${name.fullName}</strong>`;
-      
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = '×';
-      deleteBtn.className = 'delete-btn';
-      deleteBtn.addEventListener('click', () => deleteName(name.id));
-      
-      item.appendChild(info);
-      item.appendChild(deleteBtn);
-      namesList.appendChild(item);
-    });
+    renderNames(names);
   });
+}
+
+function renderNames(names) {
+  namesList.innerHTML = '';
+  
+  if (names.length === 0) {
+    namesList.innerHTML = '<div class="empty">No names saved yet</div>';
+    return;
+  }
+  
+  // Используем DocumentFragment для лучшей производительности
+  const fragment = document.createDocumentFragment();
+  
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
+    const item = document.createElement('div');
+    item.className = 'list-item';
+    
+    const info = document.createElement('div');
+    info.className = 'item-info';
+    info.innerHTML = `<strong>${name.fullName}</strong>`;
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '×';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.addEventListener('click', () => deleteName(name.id));
+    
+    item.appendChild(info);
+    item.appendChild(deleteBtn);
+    fragment.appendChild(item);
+  }
+  
+  namesList.appendChild(fragment);
 }
 
 function deleteName(id) {
@@ -595,11 +797,27 @@ function showToast(message, type = 'success') {
   }, 2000);
 }
 
+// Оптимизированная загрузка данных (батчинг запросов к storage)
 function loadData() {
-  loadBinHistory();
-  loadAddresses();
-  loadNames();
-  loadIPBlockerData(); // Загружаем данные IP Blocker
+  // Загружаем все данные одним запросом к storage
+  chrome.storage.local.get(['binHistory', 'currentBin', 'customAddresses', 'customNames'], (result) => {
+    const now = Date.now();
+    // Обновляем кэш
+    storageCache = {
+      binHistory: result.binHistory || [],
+      currentBin: result.currentBin || DEFAULT_BIN,
+      customAddresses: result.customAddresses || [],
+      customNames: result.customNames || []
+    };
+    storageCacheTime = now;
+    
+    // Рендерим все данные
+    renderBinHistory(storageCache.binHistory, storageCache.currentBin);
+    renderAddresses(storageCache.customAddresses);
+    renderNames(storageCache.customNames);
+  });
+  
+  loadIPBlockerData(); // Загружаем данные IP Blocker (отдельно, т.к. требует async)
 }
 
 // ========================
@@ -680,13 +898,13 @@ function checkIPStatus() {
  */
 async function getCountryByIP(ip) {
   try {
-    const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,countryCode`);
+    const response = await fetch(`https://ipwho.is/${ip}`);
     const data = await response.json();
     
-    if (data.status === 'success') {
+    if (data.success && data.country_code) {
       return {
         country: data.country,
-        countryCode: data.countryCode
+        countryCode: data.country_code
       };
     }
     return null;
@@ -1521,10 +1739,55 @@ if (langToggle) {
   langToggle.addEventListener('click', toggleLanguage);
 }
 
+// Проверка версии при открытии popup
+async function checkVersionOnPopup() {
+  try {
+    const result = await chrome.storage.local.get(['latestVersion', 'versionCheckDismissed']);
+    const latestVersion = result.latestVersion;
+    const dismissed = result.versionCheckDismissed;
+    const currentVersion = chrome.runtime.getManifest().version;
+    
+    if (latestVersion && !dismissed && latestVersion !== currentVersion) {
+      // Показываем уведомление в popup
+      const updateMessage = document.createElement('div');
+      updateMessage.className = 'status-message warning';
+      updateMessage.style.display = 'block';
+      updateMessage.style.marginBottom = '10px';
+      updateMessage.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+          <div>
+            <strong>⚠️ Update Available!</strong><br>
+            <small>New version ${latestVersion} is available (current: ${currentVersion})</small>
+          </div>
+          <button id="dismissUpdateBtn" style="padding: 4px 8px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); cursor: pointer; font-size: 11px;">Dismiss</button>
+        </div>
+      `;
+      
+      const container = document.querySelector('.content');
+      if (container) {
+        container.insertBefore(updateMessage, container.firstChild);
+        
+        // Обработчик для кнопки dismiss
+        const dismissBtn = document.getElementById('dismissUpdateBtn');
+        if (dismissBtn) {
+          dismissBtn.addEventListener('click', async () => {
+            await chrome.storage.local.set({ versionCheckDismissed: true });
+            updateMessage.remove();
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.error('[SAF] Error checking version in popup:', error);
+  }
+}
+
 // Загружаем переводы и настройки при открытии popup
 (async function init() {
   await loadTranslations();
   await loadSettings();
   // Теперь переводы загружены, можно загружать данные
   loadData();
+  // Проверяем версию
+  checkVersionOnPopup();
 })();

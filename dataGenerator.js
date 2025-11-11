@@ -117,57 +117,57 @@ const STREET_TYPES = [
   'Terrace', 'Trail', 'Parkway', 'Commons', 'Plaza', 'Loop', 'Path'
 ];
 
-// Города по штатам (реальные города США)
+// Города по штатам (реальные города США) - расширенная база данных
 const CITIES_BY_STATE = {
-  'AL': { name: 'Alabama', code: 'AL', cities: ['Birmingham', 'Montgomery', 'Mobile', 'Huntsville', 'Tuscaloosa', 'Hoover', 'Dothan', 'Auburn', 'Decatur', 'Madison'] },
-  'AK': { name: 'Alaska', code: 'AK', cities: ['Anchorage', 'Fairbanks', 'Juneau', 'Sitka', 'Ketchikan', 'Wasilla', 'Kenai', 'Kodiak', 'Bethel', 'Palmer'] },
-  'AZ': { name: 'Arizona', code: 'AZ', cities: ['Phoenix', 'Tucson', 'Mesa', 'Chandler', 'Scottsdale', 'Glendale', 'Gilbert', 'Tempe', 'Peoria', 'Surprise'] },
-  'AR': { name: 'Arkansas', code: 'AR', cities: ['Little Rock', 'Fort Smith', 'Fayetteville', 'Springdale', 'Jonesboro', 'North Little Rock', 'Conway', 'Rogers', 'Pine Bluff', 'Bentonville'] },
-  'CA': { name: 'California', code: 'CA', cities: ['Los Angeles', 'San Diego', 'San Jose', 'San Francisco', 'Fresno', 'Sacramento', 'Long Beach', 'Oakland', 'Bakersfield', 'Anaheim'] },
-  'CO': { name: 'Colorado', code: 'CO', cities: ['Denver', 'Colorado Springs', 'Aurora', 'Fort Collins', 'Lakewood', 'Thornton', 'Arvada', 'Westminster', 'Pueblo', 'Centennial'] },
-  'CT': { name: 'Connecticut', code: 'CT', cities: ['Bridgeport', 'New Haven', 'Stamford', 'Hartford', 'Waterbury', 'Norwalk', 'Danbury', 'New Britain', 'Bristol', 'Meriden'] },
-  'DE': { name: 'Delaware', code: 'DE', cities: ['Wilmington', 'Dover', 'Newark', 'Middletown', 'Smyrna', 'Milford', 'Seaford', 'Georgetown', 'Elsmere', 'New Castle'] },
-  'FL': { name: 'Florida', code: 'FL', cities: ['Jacksonville', 'Miami', 'Tampa', 'Orlando', 'St. Petersburg', 'Hialeah', 'Tallahassee', 'Fort Lauderdale', 'Port St. Lucie', 'Cape Coral'] },
-  'GA': { name: 'Georgia', code: 'GA', cities: ['Atlanta', 'Augusta', 'Columbus', 'Macon', 'Savannah', 'Athens', 'Sandy Springs', 'Roswell', 'Johns Creek', 'Albany'] },
-  'HI': { name: 'Hawaii', code: 'HI', cities: ['Honolulu', 'Pearl City', 'Hilo', 'Kailua', 'Waipahu', 'Kaneohe', 'Mililani', 'Kahului', 'Ewa Gentry', 'Kihei'] },
-  'ID': { name: 'Idaho', code: 'ID', cities: ['Boise', 'Meridian', 'Nampa', 'Idaho Falls', 'Pocatello', 'Caldwell', 'Coeur d\'Alene', 'Twin Falls', 'Lewiston', 'Post Falls'] },
-  'IL': { name: 'Illinois', code: 'IL', cities: ['Chicago', 'Aurora', 'Rockford', 'Joliet', 'Naperville', 'Springfield', 'Peoria', 'Elgin', 'Waukegan', 'Cicero'] },
-  'IN': { name: 'Indiana', code: 'IN', cities: ['Indianapolis', 'Fort Wayne', 'Evansville', 'South Bend', 'Carmel', 'Bloomington', 'Fishers', 'Hammond', 'Gary', 'Muncie'] },
+  'AL': { name: 'Alabama', code: 'AL', cities: ['Birmingham', 'Montgomery', 'Mobile', 'Huntsville', 'Tuscaloosa', 'Hoover', 'Dothan', 'Auburn', 'Decatur', 'Madison', 'Florence', 'Gadsden', 'Vestavia Hills', 'Prattville', 'Phenix City', 'Alabaster', 'Bessemer', 'Enterprise', 'Opelika', 'Homewood'] },
+  'AK': { name: 'Alaska', code: 'AK', cities: ['Anchorage', 'Fairbanks', 'Juneau', 'Sitka', 'Ketchikan', 'Wasilla', 'Kenai', 'Kodiak', 'Bethel', 'Palmer', 'Homer', 'Soldotna', 'Valdez', 'Nome', 'Kotzebue', 'Barrow', 'Seward', 'Petersburg', 'Wrangell', 'Unalaska'] },
+  'AZ': { name: 'Arizona', code: 'AZ', cities: ['Phoenix', 'Tucson', 'Mesa', 'Chandler', 'Scottsdale', 'Glendale', 'Gilbert', 'Tempe', 'Peoria', 'Surprise', 'Yuma', 'Avondale', 'Flagstaff', 'Goodyear', 'Buckeye', 'Lake Havasu City', 'Casa Grande', 'Prescott Valley', 'Sierra Vista', 'Maricopa'] },
+  'AR': { name: 'Arkansas', code: 'AR', cities: ['Little Rock', 'Fort Smith', 'Fayetteville', 'Springdale', 'Jonesboro', 'North Little Rock', 'Conway', 'Rogers', 'Pine Bluff', 'Bentonville', 'Hot Springs', 'Benton', 'Texarkana', 'Sherwood', 'Jacksonville', 'Russellville', 'Bella Vista', 'Paragould', 'Cabot', 'Searcy'] },
+  'CA': { name: 'California', code: 'CA', cities: ['Los Angeles', 'San Diego', 'San Jose', 'San Francisco', 'Fresno', 'Sacramento', 'Long Beach', 'Oakland', 'Bakersfield', 'Anaheim', 'Santa Ana', 'Riverside', 'Stockton', 'Irvine', 'Chula Vista', 'Fremont', 'San Bernardino', 'Modesto', 'Fontana', 'Oxnard', 'Moreno Valley', 'Huntington Beach', 'Glendale', 'Santa Clarita', 'Garden Grove', 'Oceanside', 'Rancho Cucamonga', 'Santa Rosa', 'Ontario', 'Lancaster'] },
+  'CO': { name: 'Colorado', code: 'CO', cities: ['Denver', 'Colorado Springs', 'Aurora', 'Fort Collins', 'Lakewood', 'Thornton', 'Arvada', 'Westminster', 'Pueblo', 'Centennial', 'Boulder', 'Greeley', 'Longmont', 'Loveland', 'Grand Junction', 'Broomfield', 'Castle Rock', 'Commerce City', 'Parker', 'Littleton'] },
+  'CT': { name: 'Connecticut', code: 'CT', cities: ['Bridgeport', 'New Haven', 'Stamford', 'Hartford', 'Waterbury', 'Norwalk', 'Danbury', 'New Britain', 'Bristol', 'Meriden', 'West Haven', 'Milford', 'Middletown', 'Norwich', 'Shelton', 'Torrington', 'New London', 'Ansonia', 'Derby', 'Groton'] },
+  'DE': { name: 'Delaware', code: 'DE', cities: ['Wilmington', 'Dover', 'Newark', 'Middletown', 'Smyrna', 'Milford', 'Seaford', 'Georgetown', 'Elsmere', 'New Castle', 'Bear', 'Glasgow', 'Brookside', 'Hockessin', 'Pike Creek', 'Claymont', 'Edgemoor', 'North Star', 'Wilmington Manor', 'Newark'] },
+  'FL': { name: 'Florida', code: 'FL', cities: ['Jacksonville', 'Miami', 'Tampa', 'Orlando', 'St. Petersburg', 'Hialeah', 'Tallahassee', 'Fort Lauderdale', 'Port St. Lucie', 'Cape Coral', 'Pembroke Pines', 'Hollywood', 'Miramar', 'Coral Springs', 'Clearwater', 'Miami Gardens', 'Palm Bay', 'Pompano Beach', 'West Palm Beach', 'Lakeland', 'Davie', 'Miami Beach', 'Sunrise', 'Plantation', 'Boca Raton', 'Deltona', 'Largo', 'Deerfield Beach', 'Palm Coast', 'Melbourne'] },
+  'GA': { name: 'Georgia', code: 'GA', cities: ['Atlanta', 'Augusta', 'Columbus', 'Macon', 'Savannah', 'Athens', 'Sandy Springs', 'Roswell', 'Johns Creek', 'Albany', 'Warner Robins', 'Alpharetta', 'Marietta', 'Valdosta', 'Smyrna', 'Dunwoody', 'Rome', 'East Point', 'Peachtree City', 'Gainesville'] },
+  'HI': { name: 'Hawaii', code: 'HI', cities: ['Honolulu', 'Pearl City', 'Hilo', 'Kailua', 'Waipahu', 'Kaneohe', 'Mililani', 'Kahului', 'Ewa Gentry', 'Kihei', 'Kailua-Kona', 'Wahiawa', 'Ewa Beach', 'Wailuku', 'Halawa', 'Makakilo', 'Waimalu', 'Schofield Barracks', 'Waianae', 'Nanakuli'] },
+  'ID': { name: 'Idaho', code: 'ID', cities: ['Boise', 'Meridian', 'Nampa', 'Idaho Falls', 'Pocatello', 'Caldwell', 'Coeur d\'Alene', 'Twin Falls', 'Lewiston', 'Post Falls', 'Rexburg', 'Eagle', 'Moscow', 'Kuna', 'Ammon', 'Chubbuck', 'Hayden', 'Mountain Home', 'Blackfoot', 'Garden City'] },
+  'IL': { name: 'Illinois', code: 'IL', cities: ['Chicago', 'Aurora', 'Rockford', 'Joliet', 'Naperville', 'Springfield', 'Peoria', 'Elgin', 'Waukegan', 'Cicero', 'Champaign', 'Bloomington', 'Arlington Heights', 'Evanston', 'Decatur', 'Schaumburg', 'Bolingbrook', 'Palatine', 'Skokie', 'Des Plaines', 'Orland Park', 'Tinley Park', 'Oak Lawn', 'Berwyn', 'Mount Prospect', 'Normal', 'Wheaton', 'Hoffman Estates', 'Oak Park', 'Downers Grove'] },
+  'IN': { name: 'Indiana', code: 'IN', cities: ['Indianapolis', 'Fort Wayne', 'Evansville', 'South Bend', 'Carmel', 'Bloomington', 'Fishers', 'Hammond', 'Gary', 'Muncie', 'Lafayette', 'Terre Haute', 'Kokomo', 'Anderson', 'Noblesville', 'Greenwood', 'Elkhart', 'Mishawaka', 'Lawrence', 'Jeffersonville'] },
   'IA': { name: 'Iowa', code: 'IA', cities: ['Des Moines', 'Cedar Rapids', 'Davenport', 'Sioux City', 'Iowa City', 'Waterloo', 'Council Bluffs', 'Ames', 'West Des Moines', 'Dubuque'] },
   'KS': { name: 'Kansas', code: 'KS', cities: ['Wichita', 'Overland Park', 'Kansas City', 'Olathe', 'Topeka', 'Lawrence', 'Shawnee', 'Manhattan', 'Lenexa', 'Salina'] },
   'KY': { name: 'Kentucky', code: 'KY', cities: ['Louisville', 'Lexington', 'Bowling Green', 'Owensboro', 'Covington', 'Richmond', 'Georgetown', 'Florence', 'Hopkinsville', 'Nicholasville'] },
   'LA': { name: 'Louisiana', code: 'LA', cities: ['New Orleans', 'Baton Rouge', 'Shreveport', 'Lafayette', 'Lake Charles', 'Kenner', 'Bossier City', 'Monroe', 'Alexandria', 'Houma'] },
   'ME': { name: 'Maine', code: 'ME', cities: ['Portland', 'Lewiston', 'Bangor', 'South Portland', 'Auburn', 'Biddeford', 'Sanford', 'Saco', 'Augusta', 'Westbrook'] },
-  'MD': { name: 'Maryland', code: 'MD', cities: ['Baltimore', 'Columbia', 'Germantown', 'Silver Spring', 'Waldorf', 'Glen Burnie', 'Ellicott City', 'Frederick', 'Dundalk', 'Rockville'] },
-  'MA': { name: 'Massachusetts', code: 'MA', cities: ['Boston', 'Worcester', 'Springfield', 'Cambridge', 'Lowell', 'Brockton', 'Quincy', 'Lynn', 'New Bedford', 'Fall River'] },
-  'MI': { name: 'Michigan', code: 'MI', cities: ['Detroit', 'Grand Rapids', 'Warren', 'Sterling Heights', 'Ann Arbor', 'Lansing', 'Flint', 'Dearborn', 'Livonia', 'Clinton'] },
-  'MN': { name: 'Minnesota', code: 'MN', cities: ['Minneapolis', 'St. Paul', 'Rochester', 'Duluth', 'Bloomington', 'Brooklyn Park', 'Plymouth', 'St. Cloud', 'Eagan', 'Woodbury'] },
+  'MD': { name: 'Maryland', code: 'MD', cities: ['Baltimore', 'Columbia', 'Germantown', 'Silver Spring', 'Waldorf', 'Glen Burnie', 'Ellicott City', 'Frederick', 'Dundalk', 'Rockville', 'Bethesda', 'Gaithersburg', 'Bowie', 'Hagerstown', 'Annapolis', 'College Park', 'Salisbury', 'Laurel', 'Greenbelt', 'Cumberland', 'Westminster', 'Parkville', 'Potomac', 'Towson', 'Aspen Hill', 'Wheaton', 'Catonsville', 'Severn', 'Odenton', 'Owings Mills'] },
+  'MA': { name: 'Massachusetts', code: 'MA', cities: ['Boston', 'Worcester', 'Springfield', 'Cambridge', 'Lowell', 'Brockton', 'Quincy', 'Lynn', 'New Bedford', 'Fall River', 'Newton', 'Somerville', 'Lawrence', 'Framingham', 'Haverhill', 'Waltham', 'Malden', 'Brookline', 'Plymouth', 'Medford', 'Taunton', 'Chicopee', 'Weymouth', 'Revere', 'Peabody', 'Methuen', 'Barnstable', 'Pittsfield', 'Attleboro', 'Everett'] },
+  'MI': { name: 'Michigan', code: 'MI', cities: ['Detroit', 'Grand Rapids', 'Warren', 'Sterling Heights', 'Ann Arbor', 'Lansing', 'Flint', 'Dearborn', 'Livonia', 'Clinton', 'Canton', 'Troy', 'Westland', 'Farmington Hills', 'Kalamazoo', 'Wyoming', 'Southfield', 'Rochester Hills', 'Taylor', 'Pontiac', 'St. Clair Shores', 'Royal Oak', 'Novi', 'Dearborn Heights', 'Battle Creek', 'Saginaw', 'Kentwood', 'East Lansing', 'Roseville', 'Portage'] },
+  'MN': { name: 'Minnesota', code: 'MN', cities: ['Minneapolis', 'St. Paul', 'Rochester', 'Duluth', 'Bloomington', 'Brooklyn Park', 'Plymouth', 'St. Cloud', 'Eagan', 'Woodbury', 'Maple Grove', 'Eden Prairie', 'Coon Rapids', 'Burnsville', 'Blaine', 'Lakeville', 'Minnetonka', 'Apple Valley', 'Edina', 'St. Louis Park', 'Moorhead', 'Mankato', 'Shakopee', 'Maplewood', 'Cottage Grove', 'Richfield', 'Roseville', 'Inver Grove Heights', 'Brooklyn Center', 'Andover'] },
   'MS': { name: 'Mississippi', code: 'MS', cities: ['Jackson', 'Gulfport', 'Southaven', 'Hattiesburg', 'Biloxi', 'Meridian', 'Tupelo', 'Greenville', 'Olive Branch', 'Horn Lake'] },
   'MO': { name: 'Missouri', code: 'MO', cities: ['Kansas City', 'St. Louis', 'Springfield', 'Columbia', 'Independence', 'Lee\'s Summit', 'O\'Fallon', 'St. Joseph', 'St. Charles', 'Blue Springs'] },
   'MT': { name: 'Montana', code: 'MT', cities: ['Billings', 'Missoula', 'Great Falls', 'Bozeman', 'Butte', 'Helena', 'Kalispell', 'Havre', 'Anaconda', 'Miles City'] },
   'NE': { name: 'Nebraska', code: 'NE', cities: ['Omaha', 'Lincoln', 'Bellevue', 'Grand Island', 'Kearney', 'Fremont', 'Hastings', 'Norfolk', 'Columbus', 'Papillion'] },
-  'NV': { name: 'Nevada', code: 'NV', cities: ['Las Vegas', 'Henderson', 'Reno', 'North Las Vegas', 'Sparks', 'Carson City', 'Fernley', 'Elko', 'Mesquite', 'Boulder City'] },
-  'NH': { name: 'New Hampshire', code: 'NH', cities: ['Manchester', 'Nashua', 'Concord', 'Derry', 'Dover', 'Rochester', 'Salem', 'Merrimack', 'Hudson', 'Londonderry'] },
-  'NJ': { name: 'New Jersey', code: 'NJ', cities: ['Newark', 'Jersey City', 'Paterson', 'Elizabeth', 'Edison', 'Woodbridge', 'Lakewood', 'Toms River', 'Hamilton', 'Trenton'] },
+  'NV': { name: 'Nevada', code: 'NV', cities: ['Las Vegas', 'Henderson', 'Reno', 'North Las Vegas', 'Sparks', 'Carson City', 'Fernley', 'Elko', 'Mesquite', 'Boulder City', 'Pahrump', 'Spring Valley', 'Enterprise', 'Sunrise Manor', 'Paradise', 'Whitney', 'Winchester', 'Summerlin South', 'Incline Village', 'Fallon'] },
+  'NH': { name: 'New Hampshire', code: 'NH', cities: ['Manchester', 'Nashua', 'Concord', 'Derry', 'Dover', 'Rochester', 'Salem', 'Merrimack', 'Hudson', 'Londonderry', 'Keene', 'Portsmouth', 'Goffstown', 'Laconia', 'Hampton', 'Durham', 'Exeter', 'Bedford', 'Windham', 'Milford'] },
+  'NJ': { name: 'New Jersey', code: 'NJ', cities: ['Newark', 'Jersey City', 'Paterson', 'Elizabeth', 'Edison', 'Woodbridge', 'Lakewood', 'Toms River', 'Hamilton', 'Trenton', 'Clifton', 'Camden', 'Brick', 'Cherry Hill', 'Passaic', 'Union City', 'Bayonne', 'East Orange', 'Vineland', 'New Brunswick', 'Hoboken', 'Perth Amboy', 'West New York', 'Plainfield', 'Hackensack', 'Sayreville', 'Kearny', 'Linden', 'Atlantic City', 'Fort Lee'] },
   'NM': { name: 'New Mexico', code: 'NM', cities: ['Albuquerque', 'Las Cruces', 'Rio Rancho', 'Santa Fe', 'Roswell', 'Farmington', 'Clovis', 'Hobbs', 'Alamogordo', 'Carlsbad'] },
-  'NY': { name: 'New York', code: 'NY', cities: ['New York', 'Buffalo', 'Rochester', 'Yonkers', 'Syracuse', 'Albany', 'New Rochelle', 'Mount Vernon', 'Schenectady', 'Utica'] },
-  'NC': { name: 'North Carolina', code: 'NC', cities: ['Charlotte', 'Raleigh', 'Greensboro', 'Durham', 'Winston-Salem', 'Fayetteville', 'Cary', 'Wilmington', 'High Point', 'Concord'] },
-  'ND': { name: 'North Dakota', code: 'ND', cities: ['Fargo', 'Bismarck', 'Grand Forks', 'Minot', 'West Fargo', 'Williston', 'Dickinson', 'Mandan', 'Jamestown', 'Wahpeton'] },
-  'OH': { name: 'Ohio', code: 'OH', cities: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron', 'Dayton', 'Parma', 'Canton', 'Youngstown', 'Lorain'] },
-  'OK': { name: 'Oklahoma', code: 'OK', cities: ['Oklahoma City', 'Tulsa', 'Norman', 'Broken Arrow', 'Lawton', 'Edmond', 'Moore', 'Midwest City', 'Enid', 'Stillwater'] },
-  'OR': { name: 'Oregon', code: 'OR', cities: ['Portland', 'Salem', 'Eugene', 'Gresham', 'Hillsboro', 'Beaverton', 'Bend', 'Medford', 'Springfield', 'Corvallis'] },
-  'PA': { name: 'Pennsylvania', code: 'PA', cities: ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Reading', 'Scranton', 'Bethlehem', 'Lancaster', 'Harrisburg', 'Altoona'] },
+  'NY': { name: 'New York', code: 'NY', cities: ['New York', 'Buffalo', 'Rochester', 'Yonkers', 'Syracuse', 'Albany', 'New Rochelle', 'Mount Vernon', 'Schenectady', 'Utica', 'White Plains', 'Hempstead', 'Troy', 'Niagara Falls', 'Binghamton', 'Freeport', 'Valley Stream', 'Long Beach', 'Spring Valley', 'North Tonawanda', 'Jamestown', 'Poughkeepsie', 'Newburgh', 'Ithaca', 'Elmira', 'Watertown', 'Rome', 'Kingston', 'Middletown', 'Saratoga Springs'] },
+  'NC': { name: 'North Carolina', code: 'NC', cities: ['Charlotte', 'Raleigh', 'Greensboro', 'Durham', 'Winston-Salem', 'Fayetteville', 'Cary', 'Wilmington', 'High Point', 'Concord', 'Greenville', 'Asheville', 'Gastonia', 'Jacksonville', 'Chapel Hill', 'Rocky Mount', 'Burlington', 'Wilson', 'Huntersville', 'Kannapolis', 'Apex', 'Hickory', 'Goldsboro', 'Indian Trail', 'Mooresville'] },
+  'ND': { name: 'North Dakota', code: 'ND', cities: ['Fargo', 'Bismarck', 'Grand Forks', 'Minot', 'West Fargo', 'Williston', 'Dickinson', 'Mandan', 'Jamestown', 'Wahpeton', 'Devils Lake', 'Watford City', 'Valley City', 'Grafton', 'Beulah', 'Rugby', 'Hazen', 'Stanley', 'Bottineau', 'Mayville'] },
+  'OH': { name: 'Ohio', code: 'OH', cities: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron', 'Dayton', 'Parma', 'Canton', 'Youngstown', 'Lorain', 'Hamilton', 'Springfield', 'Kettering', 'Elyria', 'Lakewood', 'Cuyahoga Falls', 'Middletown', 'Newark', 'Euclid', 'Mansfield', 'Mentor', 'Beavercreek', 'Cleveland Heights', 'Strongsville', 'Dublin', 'Fairfield', 'Findlay', 'Warren', 'Lancaster', 'Lima'] },
+  'OK': { name: 'Oklahoma', code: 'OK', cities: ['Oklahoma City', 'Tulsa', 'Norman', 'Broken Arrow', 'Lawton', 'Edmond', 'Moore', 'Midwest City', 'Enid', 'Stillwater', 'Muskogee', 'Bartlesville', 'Owasso', 'Shawnee', 'Ponca City', 'Ardmore', 'Duncan', 'Del City', 'Yukon', 'Sapulpa'] },
+  'OR': { name: 'Oregon', code: 'OR', cities: ['Portland', 'Salem', 'Eugene', 'Gresham', 'Hillsboro', 'Beaverton', 'Bend', 'Medford', 'Springfield', 'Corvallis', 'Albany', 'Tigard', 'Lake Oswego', 'Keizer', 'Oregon City', 'McMinnville', 'Redmond', 'Grants Pass', 'Tualatin', 'West Linn'] },
+  'PA': { name: 'Pennsylvania', code: 'PA', cities: ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Reading', 'Scranton', 'Bethlehem', 'Lancaster', 'Harrisburg', 'Altoona', 'York', 'State College', 'Wilkes-Barre', 'Chester', 'Williamsport', 'Easton', 'Lebanon', 'Hazleton', 'New Castle', 'Johnstown', 'McKeesport', 'Hermitage', 'Greensburg', 'Pottstown', 'Monroeville', 'Plum', 'Norristown', 'Bethel Park', 'King of Prussia', 'Drexel Hill'] },
   'RI': { name: 'Rhode Island', code: 'RI', cities: ['Providence', 'Warwick', 'Cranston', 'Pawtucket', 'East Providence', 'Woonsocket', 'Coventry', 'Cumberland', 'North Providence', 'South Kingstown'] },
   'SC': { name: 'South Carolina', code: 'SC', cities: ['Columbia', 'Charleston', 'North Charleston', 'Mount Pleasant', 'Rock Hill', 'Greenville', 'Summerville', 'Sumter', 'Goose Creek', 'Hilton Head Island'] },
   'SD': { name: 'South Dakota', code: 'SD', cities: ['Sioux Falls', 'Rapid City', 'Aberdeen', 'Brookings', 'Watertown', 'Mitchell', 'Yankton', 'Pierre', 'Huron', 'Vermillion'] },
   'TN': { name: 'Tennessee', code: 'TN', cities: ['Nashville', 'Memphis', 'Knoxville', 'Chattanooga', 'Clarksville', 'Murfreesboro', 'Franklin', 'Jackson', 'Johnson City', 'Bartlett'] },
-  'TX': { name: 'Texas', code: 'TX', cities: ['Houston', 'San Antonio', 'Dallas', 'Austin', 'Fort Worth', 'El Paso', 'Arlington', 'Corpus Christi', 'Plano', 'Laredo'] },
+  'TX': { name: 'Texas', code: 'TX', cities: ['Houston', 'San Antonio', 'Dallas', 'Austin', 'Fort Worth', 'El Paso', 'Arlington', 'Corpus Christi', 'Plano', 'Laredo', 'Lubbock', 'Garland', 'Irving', 'Amarillo', 'Grand Prairie', 'Brownsville', 'Pasadena', 'McKinney', 'Mesquite', 'McAllen', 'Killeen', 'Frisco', 'Waco', 'Carrollton', 'Denton', 'Midland', 'Abilene', 'Beaumont', 'Round Rock', 'Odessa', 'Wichita Falls', 'Richardson', 'Lewisville', 'Tyler', 'College Station', 'Pearland', 'San Angelo', 'Allen', 'League City', 'Sugar Land'] },
   'UT': { name: 'Utah', code: 'UT', cities: ['Salt Lake City', 'West Valley City', 'Provo', 'West Jordan', 'Orem', 'Sandy', 'Ogden', 'St. George', 'Layton', 'Taylorsville'] },
   'VT': { name: 'Vermont', code: 'VT', cities: ['Burlington', 'South Burlington', 'Rutland', 'Barre', 'Montpelier', 'Winooski', 'St. Albans', 'Newport', 'Vergennes', 'Brattleboro'] },
-  'VA': { name: 'Virginia', code: 'VA', cities: ['Virginia Beach', 'Norfolk', 'Chesapeake', 'Richmond', 'Newport News', 'Alexandria', 'Hampton', 'Roanoke', 'Portsmouth', 'Suffolk'] },
-  'WA': { name: 'Washington', code: 'WA', cities: ['Seattle', 'Spokane', 'Tacoma', 'Vancouver', 'Bellevue', 'Kent', 'Everett', 'Renton', 'Yakima', 'Federal Way'] },
-  'WV': { name: 'West Virginia', code: 'WV', cities: ['Charleston', 'Huntington', 'Morgantown', 'Parkersburg', 'Wheeling', 'Weirton', 'Fairmont', 'Martinsburg', 'Beckley', 'Clarksburg'] },
-  'WI': { name: 'Wisconsin', code: 'WI', cities: ['Milwaukee', 'Madison', 'Green Bay', 'Kenosha', 'Racine', 'Appleton', 'Waukesha', 'Eau Claire', 'Oshkosh', 'Janesville'] },
+  'VA': { name: 'Virginia', code: 'VA', cities: ['Virginia Beach', 'Norfolk', 'Chesapeake', 'Richmond', 'Newport News', 'Alexandria', 'Hampton', 'Roanoke', 'Portsmouth', 'Suffolk', 'Lynchburg', 'Harrisonburg', 'Leesburg', 'Charlottesville', 'Blacksburg', 'Danville', 'Manassas', 'Petersburg', 'Fredericksburg', 'Winchester', 'Salem', 'Staunton', 'Hopewell', 'Bristol', 'Waynesboro', 'Colonial Heights', 'Radford', 'Pulaski', 'Martinsville', 'South Boston'] },
+  'WA': { name: 'Washington', code: 'WA', cities: ['Seattle', 'Spokane', 'Tacoma', 'Vancouver', 'Bellevue', 'Kent', 'Everett', 'Renton', 'Yakima', 'Federal Way', 'Spokane Valley', 'Bellingham', 'Kennewick', 'Auburn', 'Pasco', 'Marysville', 'Lakewood', 'Redmond', 'Shoreline', 'Richland', 'Kirkland', 'Burien', 'Sammamish', 'Olympia', 'Lacey', 'Edmonds', 'Bremerton', 'Puyallup', 'Longview', 'University Place'] },
+  'WV': { name: 'West Virginia', code: 'WV', cities: ['Charleston', 'Huntington', 'Morgantown', 'Parkersburg', 'Wheeling', 'Weirton', 'Fairmont', 'Martinsburg', 'Beckley', 'Clarksburg', 'South Charleston', 'St. Albans', 'Vienna', 'Bluefield', 'Teays Valley', 'Bridgeport', 'Oak Hill', 'Cross Lanes', 'Hurricane', 'Nitro'] },
+  'WI': { name: 'Wisconsin', code: 'WI', cities: ['Milwaukee', 'Madison', 'Green Bay', 'Kenosha', 'Racine', 'Appleton', 'Waukesha', 'Eau Claire', 'Oshkosh', 'Janesville', 'West Allis', 'La Crosse', 'Sheboygan', 'Wauwatosa', 'Fond du Lac', 'New Berlin', 'Wausau', 'Brookfield', 'Greenfield', 'Beloit', 'Franklin', 'Oak Creek', 'Manitowoc', 'West Bend', 'Sun Prairie', 'Superior', 'Stevens Point', 'Neenah', 'Fitchburg', 'Mequon'] },
   'WY': { name: 'Wyoming', code: 'WY', cities: ['Cheyenne', 'Casper', 'Laramie', 'Gillette', 'Rock Springs', 'Sheridan', 'Green River', 'Evanston', 'Riverton', 'Jackson'] }
 };
 
@@ -190,9 +190,28 @@ const ZIP_RANGES = {
 
 /**
  * Генерирует случайное число в диапазоне (оптимизированная версия)
+ * Кэшируем Math.random для лучшей производительности
  */
+const randomCache = [];
+const RANDOM_CACHE_SIZE = 1000;
+let randomCacheIndex = 0;
+
+// Предзаполняем кэш случайных чисел
+for (let i = 0; i < RANDOM_CACHE_SIZE; i++) {
+  randomCache[i] = Math.random();
+}
+
 function randomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  // Используем кэш для быстрого доступа
+  if (randomCacheIndex >= RANDOM_CACHE_SIZE) {
+    randomCacheIndex = 0;
+    // Обновляем кэш в фоне
+    for (let i = 0; i < RANDOM_CACHE_SIZE; i++) {
+      randomCache[i] = Math.random();
+    }
+  }
+  const r = randomCache[randomCacheIndex++];
+  return Math.floor(r * (max - min + 1)) + min;
 }
 
 /**
@@ -200,15 +219,40 @@ function randomInt(min, max) {
  * Использует взвешенную выборку для более реалистичного распределения
  */
 function randomChoice(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+  if (arr.length === 0) return null;
+  if (arr.length === 1) return arr[0];
+  if (randomCacheIndex >= RANDOM_CACHE_SIZE) {
+    randomCacheIndex = 0;
+  }
+  const r = randomCache[randomCacheIndex++];
+  return arr[Math.floor(r * arr.length)];
 }
 
 /**
  * Выбирает элемент с учётом популярности (первые элементы чаще)
  * Использует квадратный корень для смещения распределения к началу
+ * Оптимизировано: кэшируем Math.pow для часто используемых значений
  */
+const powCache = new Map();
 function weightedRandomChoice(arr) {
-  const index = Math.floor(Math.pow(Math.random(), 1.5) * arr.length);
+  if (arr.length === 0) return null;
+  if (arr.length === 1) return arr[0];
+  if (randomCacheIndex >= RANDOM_CACHE_SIZE) {
+    randomCacheIndex = 0;
+  }
+  const r = randomCache[randomCacheIndex++];
+  // Кэшируем результат Math.pow для часто используемых значений
+  let powResult;
+  const cacheKey = r.toFixed(4);
+  if (powCache.has(cacheKey)) {
+    powResult = powCache.get(cacheKey);
+  } else {
+    powResult = Math.pow(r, 1.5);
+    if (powCache.size < 100) { // Ограничиваем размер кэша
+      powCache.set(cacheKey, powResult);
+    }
+  }
+  const index = Math.floor(powResult * arr.length);
   return arr[index];
 }
 
@@ -344,6 +388,102 @@ function generateZipCode(stateCode) {
 // Кэш для оптимизации (кэшируем список кодов штатов)
 const STATE_CODES_CACHE = Object.keys(CITIES_BY_STATE);
 
+// Кэш для городов по штатам (для быстрого доступа)
+const CITIES_CACHE = new Map();
+for (const [code, stateInfo] of Object.entries(CITIES_BY_STATE)) {
+  CITIES_CACHE.set(code, stateInfo.cities);
+}
+
+// Маппинг регионов США по IP-геолокации на штаты
+// Используется для более точного определения штата по IP
+const REGION_TO_STATE_MAP = {
+  // Точные названия регионов
+  'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR',
+  'California': 'CA', 'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE',
+  'Florida': 'FL', 'Georgia': 'GA', 'Hawaii': 'HI', 'Idaho': 'ID',
+  'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA', 'Kansas': 'KS',
+  'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+  'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS',
+  'Missouri': 'MO', 'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV',
+  'New Hampshire': 'NH', 'New Jersey': 'NJ', 'New Mexico': 'NM', 'New York': 'NY',
+  'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH', 'Oklahoma': 'OK',
+  'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+  'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT',
+  'Vermont': 'VT', 'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV',
+  'Wisconsin': 'WI', 'Wyoming': 'WY',
+  // Коды штатов (на случай если API вернет код)
+  'AL': 'AL', 'AK': 'AK', 'AZ': 'AZ', 'AR': 'AR', 'CA': 'CA', 'CO': 'CO',
+  'CT': 'CT', 'DE': 'DE', 'FL': 'FL', 'GA': 'GA', 'HI': 'HI', 'ID': 'ID',
+  'IL': 'IL', 'IN': 'IN', 'IA': 'IA', 'KS': 'KS', 'KY': 'KY', 'LA': 'LA',
+  'ME': 'ME', 'MD': 'MD', 'MA': 'MA', 'MI': 'MI', 'MN': 'MN', 'MS': 'MS',
+  'MO': 'MO', 'MT': 'MT', 'NE': 'NE', 'NV': 'NV', 'NH': 'NH', 'NJ': 'NJ',
+  'NM': 'NM', 'NY': 'NY', 'NC': 'NC', 'ND': 'ND', 'OH': 'OH', 'OK': 'OK',
+  'OR': 'OR', 'PA': 'PA', 'RI': 'RI', 'SC': 'SC', 'SD': 'SD', 'TN': 'TN',
+  'TX': 'TX', 'UT': 'UT', 'VT': 'VT', 'VA': 'VA', 'WA': 'WA', 'WV': 'WV',
+  'WI': 'WI', 'WY': 'WY'
+};
+
+/**
+ * Получает информацию о геолокации по IP адресу
+ * @returns {Promise<object|null>} - объект с информацией о локации или null
+ */
+async function getIPGeolocation() {
+  try {
+    // Используем ipwhois.app API (поддерживает CORS)
+    const response = await fetch('https://ipwho.is/');
+    const data = await response.json();
+    
+    if (data.success && data.country_code === 'US' && data.region_code) {
+      console.log('[DataGenerator] ✅ IP Geolocation detected:', {
+        ip: data.ip,
+        city: data.city,
+        region: data.region,
+        regionCode: data.region_code,
+        country: data.country
+      });
+      return {
+        country: data.country,
+        countryCode: data.country_code,
+        region: data.region_code, // Код штата (например 'CA')
+        regionName: data.region, // Название региона (например 'California')
+        city: data.city,
+        zip: data.postal,
+        lat: data.latitude,
+        lon: data.longitude,
+        timezone: data.timezone ? data.timezone.id : null
+      };
+    } else if (data.country_code) {
+      console.log('[DataGenerator] ⚠️ IP is not from USA:', data.country);
+      return null;
+    }
+    return null;
+  } catch (error) {
+    console.error('[DataGenerator] Error fetching IP geolocation:', error);
+    return null;
+  }
+}
+
+/**
+ * Определяет штат США по данным IP-геолокации
+ * @param {object} geoData - данные геолокации
+ * @returns {string|null} - код штата или null
+ */
+function getStateFromGeolocation(geoData) {
+  if (!geoData) return null;
+  
+  // Сначала пробуем использовать код региона
+  if (geoData.region && REGION_TO_STATE_MAP[geoData.region]) {
+    return REGION_TO_STATE_MAP[geoData.region];
+  }
+  
+  // Затем пробуем название региона
+  if (geoData.regionName && REGION_TO_STATE_MAP[geoData.regionName]) {
+    return REGION_TO_STATE_MAP[geoData.regionName];
+  }
+  
+  return null;
+}
+
 /**
  * Генерирует полный случайный адрес для США с улучшенной производительностью
  * @param {string} stateCode - код штата (опционально, если null - случайный)
@@ -369,8 +509,9 @@ function generateRandomAddress(stateCode = null, options = {}) {
     options.includeMiddleName
   );
   
-  // Выбираем город из списка штата
-  const city = randomChoice(stateInfo.cities);
+  // Выбираем город из списка штата (используем кэш)
+  const cities = CITIES_CACHE.get(stateCode) || stateInfo.cities;
+  const city = randomChoice(cities);
   const zipCode = generateZipCode(stateCode);
   
   // Генерируем адрес улицы и квартиры
@@ -403,11 +544,15 @@ function generateRandomAddress(stateCode = null, options = {}) {
  * @returns {array} - массив адресов
  */
 function generateMultipleAddresses(count = 5, stateCode = null, options = {}) {
-  const addresses = [];
-  
   // Оптимизация: предварительное выделение массива
-  addresses.length = count;
+  const addresses = new Array(count);
   
+  // Если штат не указан, выбираем один раз для всех адресов (оптимизация)
+  if (!stateCode) {
+    stateCode = randomChoice(STATE_CODES_CACHE);
+  }
+  
+  // Генерируем все адреса
   for (let i = 0; i < count; i++) {
     addresses[i] = generateRandomAddress(stateCode, options);
   }
@@ -482,7 +627,9 @@ if (typeof module !== 'undefined' && module.exports) {
     generatePhoneNumber,
     generateEmail,
     generateStreetAddress,
-    generateZipCode
+    generateZipCode,
+    getIPGeolocation,
+    getStateFromGeolocation
   };
 }
 
@@ -497,7 +644,9 @@ if (typeof window !== 'undefined') {
     generatePhoneNumber,
     generateEmail,
     generateStreetAddress,
-    generateZipCode
+    generateZipCode,
+    getIPGeolocation,
+    getStateFromGeolocation
   };
 }
 
@@ -512,7 +661,9 @@ if (typeof self !== 'undefined' && typeof window === 'undefined') {
     generatePhoneNumber,
     generateEmail,
     generateStreetAddress,
-    generateZipCode
+    generateZipCode,
+    getIPGeolocation,
+    getStateFromGeolocation
   };
 }
 

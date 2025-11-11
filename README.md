@@ -1,250 +1,251 @@
 # SAF - Stripe Auto Fill
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/GofMan5/saf-extension)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](https://github.com/GofMan5/saf-extension)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-A Chrome extension for automatic filling of Stripe checkout forms with customizable card generation, address management, and modern dark UI.
+Chrome extension for automated testing of Stripe checkout forms. Supports card generation with Luhn validation, address/name management, and IP-based geolocation.
 
 ## Features
 
-- 🚀 **One-Click Auto-Fill** - Fill entire Stripe checkout forms instantly
-- 💳 **Smart Card Generation** - Generate valid test cards with Luhn algorithm
-- 🎨 **Modern UI** - Sleek interface with neon accents
-- 🔒 **Card Validation** - Optional Luhn validation for realistic cards
-- 🏠 **Address Management** - Multiple address sources (static/manual/auto)
-- 👤 **Name Management** - Flexible name generation options
-- 🤖 **Auto-Generation** - Generate realistic random names and addresses for all 50 US states
-- 📦 **Local Storage** - All data stored locally in browser
-- ⚡ **Fast Performance** - No external dependencies
-- 🎯 **BIN History** - Quick access to recently used BINs
+- Automatic form filling for Stripe checkout pages
+- Card number generation with configurable Luhn validation
+- BIN template support (6-19 digit cards)
+- Address generation with IP-based geolocation
+- Custom address and name management
+- Multi-theme UI (Dark, Light, Galaxy, Sky, Underground)
+- IP blocker for 3DS challenge detection
+- Local data storage (no external servers)
+- BIN history with quick access
 
 ## Installation
 
-### From Source
-
-1. Clone this repository:
+1. Clone the repository:
 ```bash
 git clone https://github.com/GofMan5/saf-extension.git
-cd saf-extension
 ```
 
-2. Load in Chrome:
-   - Open `chrome://extensions/`
-   - Enable "Developer mode"
+2. Load extension in Chrome:
+   - Navigate to `chrome://extensions/`
+   - Enable Developer mode
    - Click "Load unpacked"
-   - Select the extension folder
+   - Select the extension directory
 
-3. Done! The extension icon should appear in your toolbar
+3. Pin extension to toolbar for quick access
 
 ## Usage
 
-### Quick Start
+### Basic Workflow
 
-1. Open any Stripe checkout page
-2. Click the SAF extension icon
-3. (Optional) Enter a custom BIN or use default
-4. Click "🚀 Fill Everything"
-5. Form will be automatically filled
+1. Navigate to Stripe checkout page
+2. Open extension popup
+3. Configure BIN template (optional)
+4. Click "Fill Everything"
 
-### Settings Configuration
+### Configuration
 
-Access settings by clicking the ⚙️ icon in the extension popup:
-
-#### Card Validation
-- **Enabled**: Generate only Luhn-valid card numbers
-- **Disabled**: Generate cards faster without validation
+#### Luhn Validation
+Toggle Luhn algorithm validation for generated card numbers. When enabled, all cards pass checksum validation.
 
 #### Address Source
-- **Static**: Use built-in default addresses
-- **Manual**: Use addresses you've added in Settings tab
-- **Auto**: Automatically generate random realistic USA addresses (all 50 states)
+- `Static` - Use predefined addresses
+- `Manual` - Use custom addresses from settings
+- `Auto` - Generate random US addresses with realistic data
+
+#### IP-Based Location (Auto mode only)
+When enabled with Auto address mode, generates addresses based on detected IP geolocation. Uses `ip-api.com` for location detection.
 
 #### Name Source
-- **Static**: Use built-in default names
-- **Manual**: Use custom names from Settings tab
-- **Auto**: Automatically generate random realistic names (taken from addresses)
+- `Static` - Use predefined names
+- `Manual` - Use custom names from settings
+- `Auto` - Generate names matching address data
 
-### Clearing Data
+### Data Management
 
-Click the "🗑️ Clear All Data" button on Stripe checkout pages to:
-- Clear all cookies
-- Clear localStorage
-- Clear sessionStorage
-- Clear cache
-- Reload the page
-
-## Features in Detail
-
-### Card Generation
-
-- Supports BIN templates (e.g., `552461`)
-- Auto-fills with 'x' to 16 digits
-- Supports cards up to 19 digits
-- Generates realistic expiry dates (future dates)
-- Generates valid CVV codes
-- Detects card types (Visa, Mastercard, Amex, etc.)
-
-### BIN Management
-
-- Save frequently used BINs
-- Quick history access
-- Click to load saved BIN
-- Persistent storage across sessions
-
-### Address Management
-
-Add custom addresses with:
-- Full name
-- Address line 1 & 2
-- City
-- State
-- ZIP code
-- Country (auto-detected)
-
-### Name Management
-
-Add custom names with:
-- First name
-- Last name
-- Quick selection from list
+The "Clear All Data" button removes:
+- Cookies for stripe.com domains
+- LocalStorage and SessionStorage
+- IndexedDB entries
+- Cache entries
+- Service worker registrations
 
 ## Technical Details
 
-### Manifest V3
+### Card Generation Algorithm
 
-This extension uses Manifest V3 for improved security and performance.
+- BIN template parsing with 'x' placeholder support
+- Luhn checksum calculation using lookup table optimization
+- Expiry date generation (1-60 months from current date)
+- CVV generation (3-4 digits based on card type)
+- Card type detection via BIN ranges (Visa, Mastercard, Amex, Discover, JCB, UnionPay, Diners, Maestro)
+- Batch generation with uniqueness verification
 
-### Permissions
+### Address Generation
 
-- `storage`: Store settings and data locally
-- `activeTab`: Access current tab for form filling
-- `tabs`: Manage Stripe checkout tabs
-- `scripting`: Inject content scripts
-- `cookies`: Clear cookies on user request
-- `browsingData`: Clear browsing data
+**Built-in datasets:**
+- 50 US states with accurate ZIP code ranges
+- 1000+ real US cities (20-40 per state)
+- 100+ realistic street names with variations
+- Multiple street types (Street, Avenue, Road, Drive, Lane, etc.)
+- Address line 2 generation (apartments, suites, units)
+- Weighted city selection for popular metropolitan areas
+
+**IP Geolocation (optional):**
+- Detects user location via IP address
+- Maps region data to US state codes
+- Falls back to random selection if detection fails
+- Only active in Auto address mode
+
+### Name Generation
+
+- 100+ weighted male/female first names
+- 100+ weighted last names
+- Middle name support (70% probability)
+- Gender-appropriate name selection
+- Realistic distribution based on US census data
+
+### IP Blocker
+
+- Automatic 3DS challenge modal detection
+- IP blocking on challenge detection
+- Country information via ip-api.com
+- Blocked IP history with timestamps
+- Manual IP management interface
 
 ### Architecture
 
+Manifest V3 extension with following structure:
+
 ```
-├── manifest.json       # Extension configuration
-├── popup.html         # Extension popup UI
-├── popup.js          # Popup logic
-├── styles.css        # Dark theme styles
-├── background.js     # Service worker (card generation)
-├── content.js        # Content script (form filling)
-└── icons/           # Extension icons
+├── manifest.json          # Extension manifest (v3)
+├── popup.html/js         # Extension UI and logic
+├── styles.css            # Multi-theme styling
+├── background.js         # Service worker (card/address generation)
+├── content.js            # Form detection and filling
+├── dataGenerator.js      # Address/name generation algorithms
+├── cursorRegistration.js # Cursor AI integration (dev)
+└── translations.json     # i18n support (EN/RU)
 ```
+
+**Key permissions:**
+- `storage` - Local data persistence
+- `activeTab` - Access to current Stripe page
+- `scripting` - Content script injection
+- `cookies` - Cookie management for data clearing
+- `browsingData` - Cache/storage clearing
 
 ## Development
 
-### Project Structure
+### Form Detection
 
-**background.js**: Service worker handling:
-- Card number generation with Luhn algorithm
-- BIN validation
-- Data persistence
-- Browsing data management
+Content script uses multiple detection strategies:
+1. Shadow DOM traversal for nested elements
+2. Autocomplete attribute matching
+3. Name/ID attribute scoring
+4. Placeholder and aria-label analysis
+5. Field synonym matching with weighted scoring
 
-**content.js**: Content script handling:
-- Form field detection
-- Auto-fill logic
-- Shadow DOM support
-- Address/name management
+### Data Storage
 
-**popup.js**: Extension popup handling:
-- UI interactions
-- Settings management
-- Tab switching
-- Data display
+All data stored in `chrome.storage.local`:
+- `currentBin` - Active BIN template
+- `binHistory` - Recent BIN list (max 20)
+- `customAddresses` - User addresses
+- `customNames` - User names
+- `addressSource` / `nameSource` - Generation mode
+- `useIPLocation` - IP geolocation toggle
+- `useLuhnValidation` - Luhn validation toggle
+- `blockedIPs` - IP blocker data
+- `theme` / `language` - UI preferences
 
-### Building
+## External Dependencies
 
-No build process required. The extension runs directly from source files.
+The extension makes HTTPS requests to:
+- `ipwho.is` - IP geolocation with CORS support (only when IP-based location is enabled in Auto mode)
+- `api.ipify.org` - IP address detection (IP blocker feature)
 
-### Testing
-
-1. Load extension in developer mode
-2. Open a Stripe test checkout page
-3. Test auto-fill functionality
-4. Verify data persistence
-5. Check settings functionality
-
-## Privacy
-
-- All data stored locally in browser
-- No external API calls
-- No data collection
-- No tracking
-- No telemetry
+All API calls use HTTPS for security. Card/address generation algorithms run locally.
 
 ## Compatibility
 
+Requires Chromium-based browser with Manifest V3 support:
 - Chrome 88+
 - Edge 88+
-- Any Chromium-based browser with Manifest V3 support
+- Brave 1.20+
+- Opera 74+
 
-## Known Issues
+## Limitations
 
-- BIN List tab: Currently shows "Coming Soon" placeholder
+- Only works on Stripe checkout pages
+- IP geolocation limited to US addresses
+- Form detection may fail on heavily customized checkout implementations
+- Shadow DOM elements require specific detection logic
 
-## Roadmap
+## Development Roadmap
 
-- [x] Add automatic address generation (USA - all 50 states)
-- [x] Add automatic name generation (realistic male/female names)
-- [ ] Export/import settings
+- [x] Luhn validation algorithm
+- [x] US address generation (50 states)
+- [x] Name generation with demographics
+- [x] IP-based geolocation
+- [x] Multi-theme UI
+- [x] IP blocker for 3DS
+- [x] i18n support (EN/RU)
+- [ ] Settings import/export
 - [ ] Keyboard shortcuts
-- [ ] Dark/light theme toggle
-- [ ] Email generation
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- [ ] Additional country support
 
 ## Disclaimer
 
-**This extension is for testing purposes only.** Use only with test cards and test Stripe accounts. Do not use with real payment information.
-
-## Support
-
-If you encounter any issues or have questions:
-- Open an issue on GitHub
-- Check existing issues for solutions
-- Review the documentation
+**For testing purposes only.** This tool is designed for Stripe test mode and should only be used with test API keys and test payment methods. Never use with real payment credentials or production Stripe accounts.
 
 ## Changelog
 
-### Version 1.1.0 (Current)
-- ✨ **NEW**: Auto-generation of realistic names (male/female)
-- ✨ **NEW**: Auto-generation of addresses for all 50 US states
-- ✨ **NEW**: Support for 1000+ real US cities
-- Card generation with Luhn validation
-- Address and name management
-- Dark theme UI
-- BIN history
-- Settings panel
-- Clear data functionality
+### v1.3.0 (2024-11-10)
+- IP-based address generation with geolocation
+- Extended city database (1000+ real US cities)
+- 3DS challenge detection and IP blocking
+- Multi-theme support (5 themes)
+- Bilingual interface (EN/RU)
+- Name source configuration
+- Improved form detection for nested elements
+- Card accordion auto-selection
+- Enhanced address accuracy with 20-40 cities per state
 
-### Version 1.0.0
+### v1.2.0
+- Realistic name generation (demographics-based)
+- Address generation for all 50 US states
+- Initial city database (500+ cities)
+- Weighted randomization for realistic data
+- Custom name management
+
+### v1.1.0
+- Luhn validation with lookup table optimization
+- BIN history (up to 20 entries)
+- Custom address management
+- Settings panel
+- Data clearing functionality
+
+### v1.0.0
 - Initial release
 - Basic card generation
-- Manual address management
+- Static address support
+- Dark theme UI
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file
 
 ## Author
 
-Maksim - [@GofMan5](https://github.com/GofMan5)
-tg - @GofMan5
+**Maksim Gofman**
+- GitHub: [@GofMan5](https://github.com/GofMan5)
+- Telegram: @GofMan5
 
-## Acknowledgments
+## Contributing
 
-- Stripe for checkout form structure
-- Chrome Extension community for best practices
+Pull requests welcome. For major changes, open an issue first to discuss proposed changes.
+
+1. Fork repository
+2. Create feature branch
+3. Commit changes
+4. Push to branch
+5. Open pull request

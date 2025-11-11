@@ -89,10 +89,10 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
-  min-width: 420px;
-  max-width: 600px;
-  min-height: 500px;
-  max-height: 700px;
+  min-width: 380px;
+  max-width: 450px;
+  min-height: 400px;
+  max-height: 600px;
   margin: 0;
   padding: 0;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -136,9 +136,9 @@ body.lang-switching .ip-status {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 10px 14px;
   background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(9, 9, 121, 0.1) 100%);
-  border-bottom: 2px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   position: relative;
 }
 
@@ -162,17 +162,17 @@ body.lang-switching .ip-status {
 }
 
 .header-icon {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 5px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .header-icon:hover {
@@ -194,13 +194,13 @@ body.lang-switching .ip-status {
   position: absolute;
   top: 100%;
   left: 0;
-  margin-top: 8px;
+  margin-top: 6px;
   background: var(--bg-secondary);
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  padding: 8px;
-  min-width: 180px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px;
+  min-width: 160px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   z-index: 1000;
   opacity: 0;
   visibility: hidden;
@@ -217,12 +217,12 @@ body.lang-switching .ip-status {
 .theme-option {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 6px;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 5px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
 }
 
 .theme-option:hover {
@@ -237,22 +237,22 @@ body.lang-switching .ip-status {
 }
 
 .theme-icon {
-  font-size: 20px;
-  width: 24px;
+  font-size: 18px;
+  width: 20px;
   text-align: center;
 }
 
 .theme-name {
   flex: 1;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .theme-preview {
-  width: 40px;
-  height: 24px;
-  border-radius: 4px;
+  width: 32px;
+  height: 20px;
+  border-radius: 3px;
   border: 1px solid var(--border-color);
 }
 
@@ -263,13 +263,13 @@ body.lang-switching .ip-status {
 .theme-preview.underground { background: linear-gradient(135deg, #1c1410 0%, #3d2b23 100%); }
 
 .logo {
-  font-size: 28px;
+  font-size: 22px;
   filter: drop-shadow(0 2px 4px rgba(0, 212, 255, 0.3));
 }
 
 .header h2 {
   margin: 0;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
   -webkit-background-clip: text;
@@ -278,13 +278,13 @@ body.lang-switching .ip-status {
 }
 
 .version {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
   font-weight: 500;
-  letter-spacing: 1px;
-  padding: 2px 6px;
+  letter-spacing: 0.5px;
+  padding: 1px 5px;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: 3px;
   border: 1px solid var(--border-color);
 }
 
@@ -292,17 +292,17 @@ body.lang-switching .ip-status {
 .tabs {
   display: flex;
   background: var(--bg-secondary);
-  border-bottom: 2px solid var(--border-color);
-  padding: 0 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 6px;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 11px 14px;
+  padding: 8px 10px;
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
   transition: all 0.3s ease;
@@ -310,8 +310,8 @@ body.lang-switching .ip-status {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  border-radius: 8px 8px 0 0;
+  gap: 5px;
+  border-radius: 6px 6px 0 0;
 }
 
 .tab-btn:hover {
@@ -335,13 +335,13 @@ body.lang-switching .ip-status {
 }
 
 .tab-icon {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 /* Content */
 .content {
   flex: 1;
-  padding: 16px;
+  padding: 12px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -370,9 +370,9 @@ body.lang-switching .ip-status {
 .section {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 14px;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
   animation: fadeInUp 0.3s ease;
 }
 
@@ -390,19 +390,19 @@ body.lang-switching .ip-status {
 .section-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .section-icon {
-  font-size: 18px;
+  font-size: 16px;
   filter: drop-shadow(0 2px 4px rgba(0, 212, 255, 0.2));
 }
 
 .section-header h3 {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -412,27 +412,27 @@ body.lang-switching .ip-status {
 .dev-badge {
   background: linear-gradient(135deg, #ff9800, #ff5722);
   color: white;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 3px 6px;
+  border-radius: 5px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
   animation: pulse-badge 2s infinite;
 }
 
 .count-badge {
   background: var(--accent-gradient);
   color: white;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 12px;
-  margin-left: 8px;
-  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  box-shadow: 0 2px 6px rgba(0, 212, 255, 0.3);
   display: inline-block;
-  min-width: 24px;
+  min-width: 20px;
   text-align: center;
 }
 
@@ -448,12 +448,13 @@ body.lang-switching .ip-status {
 .info-message {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 12px;
+  gap: 10px;
+  padding: 10px;
   background: rgba(255, 152, 0, 0.1);
   border: 1px solid rgba(255, 152, 0, 0.3);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-primary);
+  font-size: 12px;
 }
 
 .info-message strong {
@@ -464,29 +465,29 @@ body.lang-switching .ip-status {
 /* Sub Tabs (for Settings) */
 .sub-tabs {
   display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin-bottom: 12px;
   background: var(--bg-tertiary);
-  padding: 6px;
-  border-radius: 10px;
+  padding: 4px;
+  border-radius: 8px;
   border: 1px solid var(--border-color);
 }
 
 .sub-tab-btn {
   flex: 1;
-  padding: 10px 14px;
+  padding: 7px 10px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .sub-tab-btn:hover {
@@ -524,23 +525,23 @@ body.lang-switching .ip-status {
 
 /* Input Groups */
 .input-group {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   position: relative;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-weight: 600;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .input-with-btn {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .input-with-btn input {
@@ -550,11 +551,11 @@ body.lang-switching .ip-status {
 input.form-input,
 .input-group input {
   width: 100%;
-  padding: 12px 14px;
+  padding: 9px 11px;
   background: var(--bg-tertiary);
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 13px;
   color: var(--text-primary);
   transition: all 0.3s ease;
   font-family: 'Courier New', monospace;
@@ -574,7 +575,7 @@ input::placeholder {
 
 .input-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .input-row input {
@@ -583,18 +584,18 @@ input::placeholder {
 
 /* Checkbox */
 .checkbox-group {
-  margin: 16px 0;
+  margin: 12px 0;
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
-  padding: 12px;
+  padding: 10px;
   background: var(--bg-tertiary);
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   transition: all 0.3s ease;
 }
 
@@ -608,9 +609,9 @@ input::placeholder {
 }
 
 .checkbox-custom {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--border-color);
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border-color);
   border-radius: 4px;
   position: relative;
   transition: all 0.3s ease;
@@ -636,13 +637,13 @@ input::placeholder {
 .checkbox-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
 }
 
 .checkbox-text small {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 /* Mini Settings Dropdown */
@@ -650,11 +651,11 @@ input::placeholder {
   display: none;
   margin-top: 8px;
   background: var(--bg-secondary);
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  padding: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  animation: slideDown 0.2s ease;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  animation: slideDown 0.3s ease;
   max-height: 400px;
   overflow-y: auto;
 }
@@ -674,6 +675,25 @@ input::placeholder {
   }
 }
 
+.mini-settings-group {
+  margin-bottom: 10px;
+}
+
+.mini-settings-group:last-child {
+  margin-bottom: 0;
+}
+
+.mini-settings-group-title {
+  font-size: 9px;
+  color: var(--accent-primary);
+  margin-bottom: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+}
+
 .mini-settings-item {
   padding: 0;
   margin-bottom: 8px;
@@ -685,34 +705,48 @@ input::placeholder {
 
 .mini-settings-divider {
   height: 1px;
-  background: var(--border-color);
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
   margin: 8px 0;
 }
 
 .mini-settings-label {
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.2px;
+}
+
+.mini-settings-icon {
+  font-size: 11px;
+  filter: drop-shadow(0 1px 2px rgba(0, 212, 255, 0.3));
 }
 
 .mini-settings-hint {
-  font-size: 11px;
+  font-size: 9px;
   color: var(--text-muted);
   margin-top: 4px;
+  margin-left: 0;
   font-style: italic;
+  line-height: 1.3;
+  padding: 4px 8px;
+  background: rgba(0, 212, 255, 0.05);
+  border-left: 2px solid rgba(0, 212, 255, 0.3);
+  border-radius: 3px;
 }
 
 .mini-select {
   width: 100%;
-  padding: 8px 10px;
+  padding: 6px 8px;
   background: var(--bg-tertiary);
-  border: 2px solid var(--border-color);
-  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -723,11 +757,13 @@ input::placeholder {
 .mini-select:hover {
   border-color: var(--accent-primary);
   background: var(--bg-primary);
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.1);
 }
 
 .mini-select:focus {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15);
 }
 
 .mini-select option {
@@ -743,10 +779,10 @@ input::placeholder {
 .mini-checkbox-label {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   cursor: pointer;
-  padding: 12px 14px;
-  border-radius: 8px;
+  padding: 6px 8px;
+  border-radius: 5px;
   transition: all 0.2s ease;
   user-select: none;
   background: var(--bg-tertiary);
@@ -756,8 +792,12 @@ input::placeholder {
 .mini-checkbox-label:hover {
   background: var(--bg-secondary);
   border-color: var(--accent-primary);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.1);
+}
+
+.mini-checkbox-icon {
+  font-size: 12px;
+  margin-right: 1px;
 }
 
 .mini-checkbox-label:hover .mini-checkbox-custom {
@@ -770,12 +810,12 @@ input::placeholder {
 }
 
 .mini-checkbox-custom {
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  min-height: 20px;
-  border: 2px solid var(--border-color);
-  border-radius: 6px;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 3px;
   position: relative;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
@@ -783,14 +823,13 @@ input::placeholder {
   align-items: center;
   justify-content: center;
   background: var(--bg-primary);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .mini-checkbox-label input[type="checkbox"]:checked + .mini-checkbox-custom {
   background: var(--accent-gradient);
   border-color: var(--accent-primary);
-  box-shadow: 0 0 12px rgba(0, 212, 255, 0.4), inset 0 1px 3px rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.2);
 }
 
 .mini-checkbox-label input[type="checkbox"]:checked + .mini-checkbox-custom::after {
@@ -801,7 +840,7 @@ input::placeholder {
   transform: translate(-50%, -50%) scale(1);
   color: white;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 11px;
   line-height: 1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   animation: checkmark 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -823,10 +862,14 @@ input::placeholder {
 
 .mini-checkbox-text {
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   flex: 1;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.1px;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .mini-checkbox-label input[type="checkbox"]:checked ~ .mini-checkbox-text {
@@ -836,13 +879,13 @@ input::placeholder {
 
 /* Buttons */
 .icon-btn {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   background: var(--accent-gradient);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 20px;
+  border-radius: 6px;
+  font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -882,17 +925,17 @@ input::placeholder {
 
 .btn {
   width: 100%;
-  padding: 14px 20px;
+  padding: 10px 16px;
   border: none;
-  border-radius: 8px;
-  font-size: 15px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .btn-primary {
@@ -950,45 +993,45 @@ input::placeholder {
 }
 
 .btn-icon {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 /* Form Groups */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .form-group-compact {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .form-group-compact input {
-  padding: 9px 12px;
-  font-size: 13px;
+  padding: 8px 10px;
+  font-size: 12px;
 }
 
 .btn-sm {
-  padding: 10px 16px;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-size: 12px;
 }
 
 /* History and Lists */
 .history-list {
-  max-height: 200px;
+  max-height: 150px;
   overflow-y: auto;
 }
 
 .list-container {
-  max-height: 300px;
+  max-height: 220px;
   overflow-y: auto;
 }
 
 .list-container-compact {
-  max-height: 260px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
@@ -997,11 +1040,11 @@ input::placeholder {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  margin-bottom: 6px;
+  border-radius: 5px;
+  margin-bottom: 5px;
   transition: all 0.3s ease;
 }
 
@@ -1014,7 +1057,7 @@ input::placeholder {
 
 .history-bin {
   font-family: 'Courier New', monospace;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-primary);
   cursor: pointer;
   flex: 1;
@@ -1026,28 +1069,29 @@ input::placeholder {
 
 .item-info {
   flex: 1;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .item-info strong {
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .item-info small {
   color: var(--text-secondary);
+  font-size: 11px;
 }
 
 .delete-btn {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   background: var(--error);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1;
   transition: all 0.3s ease;
   display: flex;
@@ -1063,22 +1107,22 @@ input::placeholder {
 
 .empty {
   text-align: center;
-  padding: 40px 20px;
+  padding: 30px 15px;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 12px;
   font-style: italic;
 }
 
 /* Status Message - улучшенные стили */
 .status-message {
   display: none;
-  padding: 14px 16px;
-  border-radius: 8px;
-  margin-top: 16px;
-  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-size: 12px;
   text-align: center;
   font-weight: 600;
-  border: 2px solid;
+  border: 1px solid;
   animation: slideIn 0.3s ease;
 }
 
@@ -1115,6 +1159,13 @@ input::placeholder {
   animation: shake 0.5s ease;
 }
 
+.status-message.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+  border-color: var(--warning);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
@@ -1124,16 +1175,16 @@ input::placeholder {
 /* Toast Notifications */
 .toast {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 15px;
+  right: 15px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 12px;
   font-weight: 600;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.3s ease;
@@ -1296,20 +1347,20 @@ input::placeholder {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
-  padding: 40px 20px;
+  min-height: 300px;
+  padding: 30px 15px;
   text-align: center;
 }
 
 .sub-tab-content .coming-soon-container {
-  min-height: 350px;
-  padding: 30px 20px;
+  min-height: 250px;
+  padding: 20px 15px;
 }
 
 .coming-soon-icon {
-  font-size: 80px;
+  font-size: 60px;
   opacity: 0.4;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   animation: float 3s ease-in-out infinite;
 }
 
@@ -1323,10 +1374,10 @@ input::placeholder {
 }
 
 .coming-soon-title {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1334,39 +1385,39 @@ input::placeholder {
 }
 
 .coming-soon-subtitle {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--accent-primary);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 .coming-soon-description {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-secondary);
-  max-width: 400px;
-  line-height: 1.6;
-  margin-bottom: 32px;
+  max-width: 350px;
+  line-height: 1.5;
+  margin-bottom: 24px;
 }
 
 .coming-soon-features {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
-  max-width: 320px;
+  max-width: 300px;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 10px;
+  padding: 10px 12px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 13px;
+  border-radius: 6px;
+  font-size: 12px;
   color: var(--text-primary);
   font-weight: 500;
   transition: all 0.3s ease;
@@ -1379,62 +1430,62 @@ input::placeholder {
 }
 
 .feature-icon {
-  font-size: 20px;
+  font-size: 18px;
   flex-shrink: 0;
 }
 
 /* Responsive adjustments */
 @media (min-width: 500px) {
   body {
-    min-width: 480px;
+    min-width: 400px;
   }
   
   .content {
-    padding: 20px;
+    padding: 14px;
   }
   
   .section {
-    padding: 18px;
+    padding: 14px;
   }
 }
 
 @media (max-height: 600px) {
   .header {
-    padding: 10px 16px;
+    padding: 8px 12px;
   }
   
   .tab-btn {
-    padding: 9px 12px;
+    padding: 7px 10px;
   }
   
   .content {
-    padding: 12px;
+    padding: 10px;
   }
   
   .section {
-    padding: 12px;
-    margin-bottom: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
   }
   
   .history-list {
-    max-height: 120px;
+    max-height: 100px;
   }
   
   .list-container-compact {
-    max-height: 150px;
+    max-height: 120px;
   }
 }
 
 /* IP Blocker Styles */
 .ip-info-box {
   background: var(--bg-tertiary);
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-bottom: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .ip-info-item {
@@ -1460,44 +1511,44 @@ input::placeholder {
   color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 11px;
+  letter-spacing: 0.3px;
+  font-size: 10px;
 }
 
 .ip-value {
   font-family: 'Courier New', monospace;
   color: var(--accent-primary);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 12px;
   background: var(--bg-primary);
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 4px;
   border: 1px solid var(--border-color);
   word-break: break-word;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .ip-country {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: var(--accent-primary);
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
   background: var(--bg-primary);
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 4px;
   border: 1px solid var(--border-color);
 }
 
 .country-flag {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .ip-status {
   font-weight: 600;
-  font-size: 12px;
-  padding: 4px 10px;
+  font-size: 11px;
+  padding: 3px 8px;
   border-radius: 4px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
@@ -1517,17 +1568,17 @@ input::placeholder {
 
 .ip-description {
   background: rgba(0, 212, 255, 0.05);
-  border-left: 3px solid var(--accent-primary);
-  padding: 12px 14px;
-  margin-bottom: 14px;
-  border-radius: 6px;
+  border-left: 2px solid var(--accent-primary);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 5px;
 }
 
 .ip-description p {
-  margin: 6px 0;
-  font-size: 12px;
+  margin: 5px 0;
+  font-size: 11px;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .ip-description p:first-child {
@@ -1542,11 +1593,11 @@ input::placeholder {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  margin-bottom: 6px;
+  border-radius: 5px;
+  margin-bottom: 5px;
   transition: all 0.3s ease;
 }
 
@@ -1565,40 +1616,40 @@ input::placeholder {
 
 .blocked-ip-address {
   font-family: 'Courier New', monospace;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-primary);
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .blocked-ip-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .blocked-ip-country {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: 3px;
+  font-size: 10px;
   color: var(--accent-primary);
   font-weight: 600;
   background: rgba(0, 212, 255, 0.1);
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 2px 6px;
+  border-radius: 3px;
   border: 1px solid rgba(0, 212, 255, 0.2);
 }
 
 .blocked-ip-date {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
 }
 
 .blocked-ip-reason {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-secondary);
   font-style: italic;
 }

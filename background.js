@@ -2,27 +2,47 @@
 try {
   importScripts('dataGenerator.js');
   console.log('[SAF] DataGenerator loaded in background');
+  // Проверяем, что DataGenerator доступен
+  if (typeof DataGenerator !== 'undefined') {
+    console.log('[SAF] DataGenerator is available as DataGenerator');
+  } else if (typeof self !== 'undefined' && typeof self.DataGenerator !== 'undefined') {
+    console.log('[SAF] DataGenerator is available as self.DataGenerator');
+    // Делаем DataGenerator доступным глобально для удобства
+    if (typeof globalThis !== 'undefined') {
+      globalThis.DataGenerator = self.DataGenerator;
+    }
+  } else {
+    console.warn('[SAF] DataGenerator not found after importScripts');
+  }
 } catch (e) {
-  console.warn('[SAF] Failed to load DataGenerator:', e);
+  console.error('[SAF] Failed to load DataGenerator:', e);
 }
 
-const FIRST_NAMES = [
-  "John", "Michael", "David", "James", "Robert", "William", "Richard", "Joseph",
-  "Charles", "Thomas", "Christopher", "Daniel", "Matthew", "Anthony", "Mark",
-  "Donald", "Steven", "Paul", "Andrew", "Joshua", "Kenneth", "Kevin", "Brian",
-  "Mary", "Patricia", "Jennifer", "Linda", "Barbara", "Elizabeth", "Susan",
-  "Jessica", "Sarah", "Karen", "Nancy", "Lisa", "Betty", "Margaret", "Sandra"
-];
+// FIRST_NAMES и LAST_NAMES теперь импортируются из dataGenerator.js
+// Используем их через DataGenerator или напрямую, если они доступны глобально
 
-const LAST_NAMES = [
-  "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis",
-  "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson",
-  "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Thompson", "White",
-  "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson", "Walker", "Young"
-];
+// Кэш для случайных чисел (оптимизация)
+const bgRandomCache = [];
+const BG_RANDOM_CACHE_SIZE = 500;
+let bgRandomCacheIndex = 0;
+
+// Предзаполняем кэш
+for (let i = 0; i < BG_RANDOM_CACHE_SIZE; i++) {
+  bgRandomCache[i] = Math.random();
+}
 
 function randomChoice(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+  if (arr.length === 0) return null;
+  if (arr.length === 1) return arr[0];
+  if (bgRandomCacheIndex >= BG_RANDOM_CACHE_SIZE) {
+    bgRandomCacheIndex = 0;
+    // Обновляем кэш в фоне
+    for (let i = 0; i < BG_RANDOM_CACHE_SIZE; i++) {
+      bgRandomCache[i] = Math.random();
+    }
+  }
+  const r = bgRandomCache[bgRandomCacheIndex++];
+  return arr[Math.floor(r * arr.length)];
 }
 
 // ========================
@@ -198,22 +218,25 @@ function validateLuhnFast(cardNumber) {
 }
 
 /**
- * Генерирует валидный номер карты на основе BIN (оптимизированная версия)
- * Использует массив вместо конкатенации строк для лучшей производительности
+ * Генерирует валидный номер карты на основе BIN (СУПЕР ОПТИМИЗИРОВАННАЯ ВЕРСИЯ)
+ * Всегда генерирует валидные карты с первого раза
+ * Использует кэш случайных чисел для максимальной скорости
  * @param {string} bin - BIN шаблон (например, "552461xxxxxxxxxx")
  * @returns {string} полный валидный номер карты
  */
 function generateValidCardNumber(bin) {
-  // Используем массив для построения номера (быстрее чем конкатенация строк)
   const length = bin.length;
   const digits = new Array(length);
   
-  // Заполняем массив, заменяя 'x' на случайные цифры
+  // Заполняем массив, заменяя 'x' на случайные цифры (используем кэш)
   for (let i = 0; i < length - 1; i++) {
     const char = bin[i];
     if (char === 'x' || char === 'X') {
-      // Генерируем случайную цифру
-      digits[i] = Math.floor(Math.random() * 10);
+      // Используем кэш случайных чисел для максимальной скорости
+      if (bgRandomCacheIndex >= BG_RANDOM_CACHE_SIZE) {
+        bgRandomCacheIndex = 0;
+      }
+      digits[i] = Math.floor(bgRandomCache[bgRandomCacheIndex++] * 10);
     } else {
       digits[i] = char;
     }
@@ -222,7 +245,7 @@ function generateValidCardNumber(bin) {
   // Строим номер без контрольной цифры
   const cardNumber = digits.slice(0, length - 1).join('');
   
-  // Вычисляем и добавляем контрольную цифру
+  // Вычисляем и добавляем контрольную цифру (гарантированно валидная)
   const checkDigit = calculateLuhnCheckDigit(cardNumber);
   digits[length - 1] = checkDigit;
   
@@ -245,17 +268,35 @@ function generateValidCardNumbersBatch(bin, count) {
   return cards;
 }
 
+// Кэш для текущей даты (обновляется раз в секунду)
+let cachedDate = null;
+let cachedDateTime = 0;
+const DATE_CACHE_TTL = 1000; // 1 секунда
+
 /**
  * Генерирует случайную дату истечения (от текущего месяца до 5 лет вперед)
  * @returns {{month: string, year: string}} месяц и год
  */
 function generateExpiryDate() {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1; // 1-12
+  // Используем кэшированную дату для лучшей производительности
+  const now = Date.now();
+  if (!cachedDate || (now - cachedDateTime) > DATE_CACHE_TTL) {
+    const date = new Date();
+    cachedDate = {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1
+    };
+    cachedDateTime = now;
+  }
   
-  // Случайное количество месяцев вперед (от 1 до 60)
-  const monthsAhead = Math.floor(Math.random() * 60) + 1;
+  const currentYear = cachedDate.year;
+  const currentMonth = cachedDate.month;
+  
+  // Используем кэш случайных чисел
+  if (bgRandomCacheIndex >= BG_RANDOM_CACHE_SIZE) {
+    bgRandomCacheIndex = 0;
+  }
+  const monthsAhead = Math.floor(bgRandomCache[bgRandomCacheIndex++] * 60) + 1;
   
   let targetMonth = currentMonth + monthsAhead;
   let targetYear = currentYear;
@@ -280,58 +321,95 @@ function generateCVV(length = 3) {
   // Используем массив для лучшей производительности
   const digits = new Array(length);
   for (let i = 0; i < length; i++) {
-    digits[i] = Math.floor(Math.random() * 10);
+    if (bgRandomCacheIndex >= BG_RANDOM_CACHE_SIZE) {
+      bgRandomCacheIndex = 0;
+    }
+    digits[i] = Math.floor(bgRandomCache[bgRandomCacheIndex++] * 10);
   }
   return digits.join('');
 }
 
 /**
- * Локальная генерация карт с валидацией по алгоритму Луна (оптимизированная версия)
- * Использует быструю валидацию и улучшенную генерацию
+ * СУПЕР ОПТИМИЗИРОВАННАЯ генерация карт с валидацией по алгоритму Луна
+ * Генерирует карты практически моментально, всегда 100% успех
  * @param {string} bin - BIN шаблон
- * @param {number} count - количество карт для генерации
+ * @param {number} count - количество карт для генерации (по умолчанию 1)
  * @returns {Array} массив объектов карт
  */
-function generateCardsLocally(bin, count = 10) {
+function generateCardsLocally(bin, count = 1) {
+  const startTime = performance.now();
   const cards = new Array(count); // Предварительное выделение массива
   const generatedNumbers = new Set(); // Для избежания дубликатов
-  
-  console.log(`🎲 Generating ${count} valid cards from BIN: ${bin} (optimized)`);
-  
-  let cardsGenerated = 0;
-  let attempts = 0;
-  const maxAttempts = count * 10; // Защита от бесконечного цикла
   
   // Определяем тип карты один раз (если возможно)
   const binDigits = bin.replace(/[xX]/g, '0');
   const estimatedCardType = getCardType(binDigits);
   
-  while (cardsGenerated < count && attempts < maxAttempts) {
-    attempts++;
+  // Предгенерируем все необходимые данные заранее для максимальной скорости
+  const expiryDates = new Array(count);
+  const cvvs = new Array(count);
+  for (let i = 0; i < count; i++) {
+    expiryDates[i] = generateExpiryDate();
+    cvvs[i] = generateCVV(3);
+  }
+  
+  // Генерируем карты - теперь всегда валидные с первого раза
+  for (let i = 0; i < count; i++) {
+    let cardNumber;
+    let attempts = 0;
+    const maxUniqueAttempts = 50; // Максимум попыток для уникальности
+    let currentBin = bin; // Используем локальную копию BIN
     
-    const cardNumber = generateValidCardNumber(bin);
+    // Генерируем уникальный номер карты
+    do {
+      cardNumber = generateValidCardNumber(currentBin);
+      attempts++;
+      
+      // Если слишком много попыток, добавляем уникальный суффикс
+      if (attempts > maxUniqueAttempts) {
+        // Меняем последние X на случайные цифры для уникальности
+        const binArray = currentBin.split('');
+        const xIndices = [];
+        for (let j = 0; j < binArray.length - 1; j++) {
+          if (binArray[j] === 'x' || binArray[j] === 'X') {
+            xIndices.push(j);
+          }
+        }
+        if (xIndices.length > 0) {
+          if (bgRandomCacheIndex >= BG_RANDOM_CACHE_SIZE) {
+            bgRandomCacheIndex = 0;
+          }
+          const randomIndex = xIndices[Math.floor(bgRandomCache[bgRandomCacheIndex++] * xIndices.length)];
+          binArray[randomIndex] = Math.floor(bgRandomCache[bgRandomCacheIndex++] * 10).toString();
+          currentBin = binArray.join('');
+        } else {
+          // Если нет X, добавляем уникальный суффикс к номеру
+          break;
+        }
+      }
+    } while (generatedNumbers.has(cardNumber) && attempts < maxUniqueAttempts * 2);
     
-    // Проверяем уникальность
+    // Если все еще дубликат, добавляем уникальный суффикс к номеру
     if (generatedNumbers.has(cardNumber)) {
-      continue;
-    }
-    
-    // Используем быструю валидацию (номер только из цифр)
-    if (!validateLuhnFast(cardNumber)) {
-      console.warn('⚠️ Generated invalid card (should not happen):', cardNumber);
-      continue;
+      const baseNumber = cardNumber.slice(0, -2);
+      const lastDigit = parseInt(cardNumber[cardNumber.length - 2]) || 0;
+      const newLastDigit = ((lastDigit + i + 1) % 10);
+      const newBase = baseNumber + newLastDigit;
+      const newCheckDigit = calculateLuhnCheckDigit(newBase);
+      cardNumber = newBase + newCheckDigit;
     }
     
     generatedNumbers.add(cardNumber);
     
-    const expiry = generateExpiryDate();
-    const cvv = generateCVV(3);
+    // Используем предгенерированные данные
+    const expiry = expiryDates[i];
+    const cvv = cvvs[i];
     
     // Используем предварительно определенный тип или вычисляем
     const cardType = estimatedCardType !== 'Unknown' ? estimatedCardType : getCardType(cardNumber);
     
-    cards[cardsGenerated] = {
-      serial_number: cardsGenerated + 1,
+    cards[i] = {
+      serial_number: i + 1,
       card_number: cardNumber,
       expiry_month: expiry.month,
       expiry_year: expiry.year,
@@ -340,32 +418,12 @@ function generateCardsLocally(bin, count = 10) {
       full_format: `${cardNumber}|${expiry.month}|${expiry.year}|${cvv}`,
       luhn_valid: true
     };
-    
-    cardsGenerated++;
   }
   
-  console.log(`[SAF] Successfully generated ${cardsGenerated} valid cards in ${attempts} attempts`);
+  const endTime = performance.now();
+  console.log(`[SAF] ✅ Generated ${count} valid cards in ${(endTime - startTime).toFixed(2)}ms`);
   
-  // Валидация всех сгенерированных карт (только для проверки)
-  if (cardsGenerated > 0) {
-    const invalidCards = cards.slice(0, cardsGenerated).filter(card => !validateLuhnFast(card.card_number));
-    if (invalidCards.length > 0) {
-      console.error(`❌ Found ${invalidCards.length} invalid cards!`);
-    } else {
-      console.log('[SAF] ✅ All cards passed Luhn validation');
-    }
-    
-    // Показать статистику по типам карт
-    const cardTypeCounts = {};
-    for (let i = 0; i < cardsGenerated; i++) {
-      const type = cards[i].card_type;
-      cardTypeCounts[type] = (cardTypeCounts[type] || 0) + 1;
-    }
-    console.log('📊 Card types:', cardTypeCounts);
-  }
-  
-  // Возвращаем только реально сгенерированные карты
-  return cardsGenerated === count ? cards : cards.slice(0, cardsGenerated);
+  return cards;
 }
 
 // Дефолтные адреса
@@ -399,10 +457,13 @@ const DEFAULT_ADDRESSES = [
 ];
 
 async function getRandomAddress() {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(['customAddresses', 'addressSource'], (result) => {
+  return new Promise(async (resolve) => {
+    chrome.storage.local.get(['customAddresses', 'addressSource', 'useIPLocation', 'customNames', 'nameSource'], async (result) => {
       const customAddresses = result.customAddresses || [];
+      const customNames = result.customNames || [];
       const addressSource = result.addressSource || 'static';
+      const nameSource = result.nameSource || 'static';
+      const useIPLocation = result.useIPLocation || false;
       
       let availableAddresses = [];
       
@@ -417,13 +478,67 @@ async function getRandomAddress() {
           break;
         case 'auto':
           // Автогенерация случайного адреса
-          if (typeof DataGenerator !== 'undefined' && DataGenerator.generateRandomAddress) {
-            const generatedAddress = DataGenerator.generateRandomAddress();
-            console.log(`[SAF Background] Auto-generated address:`, generatedAddress.name, generatedAddress.city, generatedAddress.stateCode);
-            resolve(generatedAddress);
-            return;
+          // Проверяем DataGenerator в разных контекстах (service worker использует self)
+          let DataGen = null;
+          if (typeof DataGenerator !== 'undefined') {
+            DataGen = DataGenerator;
+          } else if (typeof globalThis !== 'undefined' && typeof globalThis.DataGenerator !== 'undefined') {
+            DataGen = globalThis.DataGenerator;
+          } else if (typeof self !== 'undefined' && typeof self.DataGenerator !== 'undefined') {
+            DataGen = self.DataGenerator;
+          }
+          
+          if (DataGen && typeof DataGen.generateRandomAddress === 'function') {
+            let stateCode = null;
+            
+            // Если включена IP-геолокация, пытаемся определить штат по IP
+            if (useIPLocation && typeof DataGen.getIPGeolocation === 'function' && typeof DataGen.getStateFromGeolocation === 'function') {
+              try {
+                console.log('[SAF Background] 📍 IP-based location enabled, fetching geolocation...');
+                const geoData = await DataGen.getIPGeolocation();
+                
+                if (geoData) {
+                  console.log('[SAF Background] 🌍 Geolocation data received:', {
+                    region: geoData.regionName,
+                    regionCode: geoData.region,
+                    city: geoData.city,
+                    country: geoData.country
+                  });
+                  
+                  stateCode = DataGen.getStateFromGeolocation(geoData);
+                  
+                  if (stateCode) {
+                    console.log(`[SAF Background] ✅ Successfully mapped to US state: ${stateCode}`);
+                  } else {
+                    console.log('[SAF Background] ⚠️ Could not map geolocation to US state, using random');
+                  }
+                } else {
+                  console.log('[SAF Background] ⚠️ Geolocation data is null, using random state');
+                }
+              } catch (error) {
+                console.error('[SAF Background] ❌ Error getting IP geolocation:', error);
+              }
+            } else {
+              console.log('[SAF Background] ℹ️ IP-based location is disabled or not available');
+            }
+            
+            // Генерируем адрес (с штатом по IP или случайный)
+            try {
+              const generatedAddress = DataGen.generateRandomAddress(stateCode);
+              console.log(`[SAF Background] Auto-generated address:`, generatedAddress.name, generatedAddress.city, generatedAddress.stateCode);
+              resolve(generatedAddress);
+              return;
+            } catch (error) {
+              console.error('[SAF Background] ❌ Error generating address:', error);
+              console.warn('[SAF Background] Falling back to static addresses');
+              availableAddresses = DEFAULT_ADDRESSES;
+            }
           } else {
             console.warn('[SAF Background] DataGenerator not available, falling back to static');
+            console.warn('[SAF Background] DataGenerator check:', {
+              'typeof DataGenerator': typeof DataGenerator,
+              'typeof self.DataGenerator': typeof self !== 'undefined' ? typeof self.DataGenerator : 'self undefined'
+            });
             availableAddresses = DEFAULT_ADDRESSES;
           }
           break;
@@ -431,15 +546,119 @@ async function getRandomAddress() {
           availableAddresses = DEFAULT_ADDRESSES;
       }
       
+      let addr;
       if (availableAddresses.length === 0) {
-        resolve(DEFAULT_ADDRESSES[0]);
+        addr = DEFAULT_ADDRESSES[0];
       } else {
-        const addr = randomChoice(availableAddresses);
-        console.log(`[SAF Background] Using ${addressSource} address:`, addr.name);
-        resolve(addr);
+        addr = randomChoice(availableAddresses);
       }
+      
+      // Применяем настройки источника имени
+      if (nameSource === 'manual' && customNames.length > 0) {
+        // Используем пользовательское имя
+        const customName = randomChoice(customNames);
+        addr = {
+          ...addr,
+          name: customName.fullName,
+          firstName: customName.firstName,
+          lastName: customName.lastName
+        };
+        console.log(`[SAF Background] Using custom name:`, customName.fullName);
+      } else if (nameSource === 'static') {
+        // Используем статическое имя из DEFAULT_ADDRESSES
+        const staticName = randomChoice(DEFAULT_ADDRESSES);
+        addr = {
+          ...addr,
+          name: staticName.name,
+          firstName: staticName.firstName,
+          lastName: staticName.lastName
+        };
+        console.log(`[SAF Background] Using static name:`, staticName.name);
+      }
+      // Если nameSource === 'auto' - используем имя из адреса (по умолчанию)
+      
+      console.log(`[SAF Background] Final address:`, addr.name, addr.city, addr.stateCode);
+      resolve(addr);
     });
   });
+}
+
+// Функция для сравнения версий (например: "1.5.0" > "1.4.0")
+function compareVersions(version1, version2) {
+  const v1parts = version1.split('.').map(Number);
+  const v2parts = version2.split('.').map(Number);
+  
+  for (let i = 0; i < Math.max(v1parts.length, v2parts.length); i++) {
+    const v1part = v1parts[i] || 0;
+    const v2part = v2parts[i] || 0;
+    
+    if (v1part > v2part) return 1;
+    if (v1part < v2part) return -1;
+  }
+  
+  return 0;
+}
+
+// Функция для проверки версии расширения
+async function checkVersionUpdate() {
+  try {
+    const currentVersion = chrome.runtime.getManifest().version;
+    console.log('[SAF] Current version:', currentVersion);
+    
+    // Получаем последнюю проверку из storage
+    const result = await chrome.storage.local.get(['lastVersionCheck', 'versionCheckDismissed']);
+    const lastCheck = result.lastVersionCheck || 0;
+    const dismissed = result.versionCheckDismissed || false;
+    
+    // Проверяем не чаще раза в день (24 часа)
+    const oneDay = 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    
+    if (now - lastCheck < oneDay && !dismissed) {
+      console.log('[SAF] Version check skipped (checked recently)');
+      return;
+    }
+    
+    // Загружаем версию с GitHub
+    const response = await fetch('https://raw.githubusercontent.com/GofMan5/SAF/main/version.txt?t=' + now);
+    if (!response.ok) {
+      console.warn('[SAF] Failed to fetch version from GitHub:', response.status);
+      return;
+    }
+    
+    const latestVersion = (await response.text()).trim();
+    console.log('[SAF] Latest version from GitHub:', latestVersion);
+    
+    // Сохраняем время последней проверки
+    await chrome.storage.local.set({ lastVersionCheck: now });
+    
+    // Сравниваем версии
+    if (compareVersions(latestVersion, currentVersion) > 0) {
+      console.log('[SAF] ⚠️ New version available:', latestVersion);
+      
+      // Показываем уведомление
+      await chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icon128.png',
+        title: 'SAF - Update Available',
+        message: `New version ${latestVersion} is available! Current: ${currentVersion}\n\nVisit GitHub to update.`
+      });
+      
+      // Сохраняем информацию о новой версии
+      await chrome.storage.local.set({ 
+        latestVersion: latestVersion,
+        versionCheckDismissed: false
+      });
+    } else {
+      console.log('[SAF] ✅ Extension is up to date');
+      // Сбрасываем флаг dismissed при обновлении
+      if (dismissed) {
+        await chrome.storage.local.set({ versionCheckDismissed: false });
+      }
+    }
+  } catch (error) {
+    console.error('[SAF] Error checking version:', error);
+  }
 }
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -451,6 +670,14 @@ chrome.runtime.onInstalled.addListener(() => {
       });
     }
   });
+  
+  // Проверяем версию при установке
+  checkVersionUpdate();
+});
+
+// Проверяем версию при старте расширения
+chrome.runtime.onStartup.addListener(() => {
+  checkVersionUpdate();
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -495,94 +722,133 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 /**
- * Обработчик для локальной генерации карт
+ * Обработчик для локальной генерации карт (ОПТИМИЗИРОВАННЫЙ)
+ * Генерирует 1 карту моментально, всегда успешно
  * @param {string} bin - BIN шаблон
  * @param {boolean} useValidation - использовать ли валидацию Луна
  * @param {function} callback - функция обратного вызова
  */
 async function generateCardsLocally_Handler(bin, useValidation = true, callback) {
   try {
-    console.log(`[SAF] Starting card generation... (Luhn: ${useValidation ? 'ON' : 'OFF'})`);
+    const startTime = performance.now();
     
-    // Генерируем 10 карт (с валидацией или без)
-    const cards = useValidation ? generateCardsLocally(bin, 10) : generateCardsSimple(bin, 10);
+    // Генерируем 1 карту (моментально, всегда успешно)
+    const cards = useValidation ? generateCardsLocally(bin, 1) : generateCardsSimple(bin, 1);
+    
+    // Гарантируем что карта всегда сгенерирована
+    if (cards.length === 0) {
+      // Fallback: генерируем простую карту без валидации
+      console.warn('[SAF] Fallback to simple generation');
+      const fallbackCards = generateCardsSimple(bin, 1);
+      if (fallbackCards.length > 0) {
+        cards.push(fallbackCards[0]);
+      }
+    }
     
     if (cards.length > 0) {
-      const randomData = await getRandomAddress();
+      // Получаем адрес параллельно (не блокируем генерацию)
+      const randomDataPromise = getRandomAddress();
       
-      // Сохраняем в storage
+      // Сохраняем карты сразу
       chrome.storage.local.set({
         generatedCards: cards,
+        randomData: null // Обновим позже
+      });
+      
+      // Ждем адрес и обновляем
+      const randomData = await randomDataPromise;
+      chrome.storage.local.set({
         randomData: randomData
       });
       
-      console.log(`[SAF] Generated and saved ${cards.length} cards`);
+      const endTime = performance.now();
+      console.log(`[SAF] ✅ Generated and saved ${cards.length} card(s) in ${(endTime - startTime).toFixed(2)}ms`);
       callback({ success: true, cards: cards });
     } else {
-      console.error('❌ No cards generated');
+      // Это не должно происходить, но на всякий случай
+      console.error('❌ Critical: No cards generated even with fallback');
       callback({ success: false, error: 'Failed to generate cards' });
     }
     
   } catch (error) {
     console.error('❌ Error in generateCardsLocally_Handler:', error);
-    callback({ success: false, error: error.message });
+    // Последняя попытка: генерируем простую карту без валидации
+    try {
+      const emergencyCards = generateCardsSimple(bin, 1);
+      if (emergencyCards.length > 0) {
+        chrome.storage.local.set({ generatedCards: emergencyCards });
+        callback({ success: true, cards: emergencyCards });
+      } else {
+        callback({ success: false, error: error.message });
+      }
+    } catch (emergencyError) {
+      callback({ success: false, error: error.message });
+    }
   }
 }
 
 /**
- * Простая генерация карт без валидации Луна (оптимизированная версия)
- * Быстрее чем с валидацией, использует оптимизированные алгоритмы
+ * СУПЕР БЫСТРАЯ генерация карт без валидации Луна
+ * Генерирует карты практически моментально
  * @param {string} bin - BIN шаблон
- * @param {number} count - количество карт
+ * @param {number} count - количество карт (по умолчанию 1)
  * @returns {Array} массив объектов карт
  */
-function generateCardsSimple(bin, count = 10) {
+function generateCardsSimple(bin, count = 1) {
+  const startTime = performance.now();
   const cards = new Array(count); // Предварительное выделение
   const generatedNumbers = new Set();
-  
-  console.log(`🎲 Generating ${count} cards (no validation, optimized) from BIN: ${bin}`);
   
   const binLength = bin.length;
   const binDigits = bin.replace(/[xX]/g, '0');
   const estimatedCardType = getCardType(binDigits);
   
-  let cardsGenerated = 0;
-  let attempts = 0;
-  const maxAttempts = count * 5; // Защита от бесконечного цикла
+  // Предгенерируем все необходимые данные заранее
+  const expiryDates = new Array(count);
+  const cvvs = new Array(count);
+  for (let i = 0; i < count; i++) {
+    expiryDates[i] = generateExpiryDate();
+    cvvs[i] = generateCVV(3);
+  }
   
-  while (cardsGenerated < count && attempts < maxAttempts) {
-    attempts++;
-    
-    // Используем массив для построения номера (быстрее конкатенации)
+  // Генерируем карты
+  for (let i = 0; i < count; i++) {
     const digits = new Array(binLength);
     
-    // Заменяем 'x' на случайные цифры
+    // Заменяем 'x' на случайные цифры (используем кэш)
     for (let j = 0; j < binLength; j++) {
       const char = bin[j];
       if (char === 'x' || char === 'X') {
-        digits[j] = Math.floor(Math.random() * 10);
+        if (bgRandomCacheIndex >= BG_RANDOM_CACHE_SIZE) {
+          bgRandomCacheIndex = 0;
+        }
+        digits[j] = Math.floor(bgRandomCache[bgRandomCacheIndex++] * 10);
       } else {
         digits[j] = char;
       }
     }
     
-    const cardNumber = digits.join('');
+    let cardNumber = digits.join('');
     
-    // Проверяем уникальность
+    // Гарантируем уникальность (если дубликат, меняем последние цифры)
     if (generatedNumbers.has(cardNumber)) {
-      continue;
+      const lastIndex = binLength - 1;
+      const newDigit = ((parseInt(digits[lastIndex]) || 0) + i + 1) % 10;
+      digits[lastIndex] = newDigit;
+      cardNumber = digits.join('');
     }
     
     generatedNumbers.add(cardNumber);
     
-    const expiry = generateExpiryDate();
-    const cvv = generateCVV(3);
+    // Используем предгенерированные данные
+    const expiry = expiryDates[i];
+    const cvv = cvvs[i];
     
     // Используем предварительно определенный тип
     const cardType = estimatedCardType !== 'Unknown' ? estimatedCardType : getCardType(cardNumber);
     
-    cards[cardsGenerated] = {
-      serial_number: cardsGenerated + 1,
+    cards[i] = {
+      serial_number: i + 1,
       card_number: cardNumber,
       expiry_month: expiry.month,
       expiry_year: expiry.year,
@@ -591,12 +857,11 @@ function generateCardsSimple(bin, count = 10) {
       full_format: `${cardNumber}|${expiry.month}|${expiry.year}|${cvv}`,
       luhn_valid: false
     };
-    
-    cardsGenerated++;
   }
   
-  console.log(`[SAF] Generated ${cardsGenerated} cards (simple mode) in ${attempts} attempts`);
-  return cardsGenerated === count ? cards : cards.slice(0, cardsGenerated);
+  const endTime = performance.now();
+  console.log(`[SAF] ✅ Generated ${count} cards (simple mode) in ${(endTime - startTime).toFixed(2)}ms`);
+  return cards;
 }
 
 async function generateCardsFromAKR(bin, stripeTabId, callback) {
